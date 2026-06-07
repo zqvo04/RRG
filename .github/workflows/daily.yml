@@ -1,0 +1,61 @@
+# ============================================================================
+# Daily RRG batch — incremental ingest + RRG compute into Supabase.
+# ----------------------------------------------------------------------------
+# Runs on weekdays at 21:30 UTC (after the US cash close: 16:00 ET = 20:00 UTC
+# EDT / 21:00 UTC EST, so 21:30 leaves a safety buffer year-round). The job is
+# idempotent (ON CONFLICT UPSERT) so re-runs and US-holiday no-ops are harmless.
+#
+# Required GitHub secret:
+#   DATABASE_URL  postgresql://postgres:<pw>@db.<ref>.supabase.co:5432/postgres
+# Optional repo variable:
+#   BACKFILL_YEARS  (first-ever run backfill horizon; default 3)
+# ============================================================================
+name: daily-rrg
+
+on:
+  schedule:
+    # min hour dom mon dow  -> 21:30 UTC, Monday-Friday
+    - cron: "30 21 * * 1-5"
+  workflow_dispatch: {}        # allow manual runs from the Actions tab
+
+# Never let two runs touch the DB at once; let an in-progress run finish.
+concurrency:
+  group: daily-rrg
+  cancel-in-progress: false
+
+permissions:
+  contents: read               # least privilege; the job only reads the repo
+
+jobs:
+  batch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      BACKFILL_YEARS: ${{ vars.BACKFILL_YEARS || '3' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-batch.txt
+
+      - name: Install batch dependencies
+        run: pip install -r requirements-batch.txt
+
+      - name: Guard — DATABASE_URL must be set
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::DATABASE_URL secret is not configured."
+            exit 1
+          fi
+
+      - name: Ingest prices (yfinance -> raw_prices)
+        run: python -m batch.ingest
+
+      - name: Compute RRG (raw_prices -> rrg_values)
+        run: python -m batch.compute_job
