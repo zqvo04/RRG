@@ -30,6 +30,24 @@ DEFAULT_PRESET = "3M"
 MIN_POINTS = 3
 
 
+def sample_range(df: pd.DataFrame, range_td: int, step: int) -> pd.DataFrame:
+    """Take the last ``range_td`` rows of ``df`` and keep every ``step``-th.
+
+    Counts back from the newest row so the latest bar is always kept; the oldest
+    in-range bar is always kept too. On short history the step is shrunk so at
+    least :data:`MIN_POINTS` remain.
+    """
+    tail = df.iloc[-range_td:] if len(df) > range_td else df
+    n = len(tail)
+    if n == 0:
+        return tail
+    max_step = max(1, (n - 1) // (MIN_POINTS - 1))
+    step = max(1, min(step, max_step))
+    keep = set(range(n - 1, -1, -step))  # newest backward -> endpoint always in
+    keep.add(0)                          # anchor oldest in-range bar
+    return tail.iloc[sorted(keep)]
+
+
 def sample_tail(df: pd.DataFrame, preset: str) -> pd.DataFrame:
     """Slice ``df`` to the preset range and subsample by the preset step.
 
@@ -48,17 +66,19 @@ def sample_tail(df: pd.DataFrame, preset: str) -> pd.DataFrame:
         bars are always present.
     """
     range_td, step = PRESETS[preset]
-    tail = df.iloc[-range_td:] if len(df) > range_td else df
-    n = len(tail)
+    return sample_range(df, range_td, step)
+
+
+def sample_by_dates(df: pd.DataFrame, start, end, target_points: int = 13) -> pd.DataFrame:
+    """Custom window: rows within [start, end], subsampled to ~target_points.
+
+    The step is derived from how many bars fall in the window so the tail keeps
+    a curve-friendly point count regardless of how wide a range the user picks.
+    """
+    mask = (df.index >= pd.Timestamp(start)) & (df.index <= pd.Timestamp(end))
+    win = df.loc[mask]
+    n = len(win)
     if n == 0:
-        return tail
-
-    # If the available history is short, shrink the step so we still keep at
-    # least MIN_POINTS (a big step over few bars would collapse to endpoints).
-    max_step = max(1, (n - 1) // (MIN_POINTS - 1))
-    step = min(step, max_step)
-
-    # Indices counted back from the newest (n-1) so the endpoint is always in.
-    keep = set(range(n - 1, -1, -step))
-    keep.add(0)  # always anchor the oldest in-range bar
-    return tail.iloc[sorted(keep)]
+        return win
+    step = max(1, round(n / max(2, target_points)))
+    return sample_range(win, n, step)

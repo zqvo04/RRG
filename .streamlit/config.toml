@@ -1,0 +1,11 @@
+# Wall Street look: deep navy canvas, gold accent, serif type. Kept minimal.
+[theme]
+base = "dark"
+primaryColor = "#c9a227"              # gold accent (buttons, active controls)
+backgroundColor = "#0a0f1c"           # near-black navy
+secondaryBackgroundColor = "#111a2e"  # panel navy
+textColor = "#e8ebf2"
+font = "serif"
+
+[server]
+headless = true

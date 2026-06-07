@@ -5,7 +5,7 @@ read-only) and renders a Relative Rotation Graph. It performs NO data-provider
 calls and NO RRG math — only DB reads, tail sampling, and Plotly drawing.
 
 Run locally:  streamlit run app.py
-Deploy:       Streamlit Community Cloud (set secrets, see .streamlit/secrets.toml.example)
+Deploy:       Streamlit Community Cloud (defaults baked in; no secrets needed)
 """
 
 from __future__ import annotations
@@ -13,14 +13,17 @@ from __future__ import annotations
 import json
 import os
 import urllib.request
-from datetime import datetime
+from datetime import timedelta
 
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
 from rrg import config, curve
-from rrg.sampling import DEFAULT_PRESET, MIN_POINTS, PRESET_ORDER, PRESETS, sample_tail
+from rrg.sampling import (
+    DEFAULT_PRESET, MIN_POINTS, PRESET_ORDER, PRESETS,
+    sample_by_dates, sample_tail,
+)
 
 # ── public connection defaults (anon key is publishable; RLS keeps it read-only)
 DEFAULT_URL = "https://mptecsecdhdoxqocubuv.supabase.co"
@@ -31,18 +34,29 @@ DEFAULT_ANON = (
     "2MxTb4z9UZWjE4P_ZABZPNkHQPhMuafbO8lISNdEPAg"
 )
 
-# Per-ticker colours (crypto get their brand hues).
+CUSTOM = "사용자 지정"
+
+# Per-ticker colours — vivid on the dark canvas; crypto keep brand-ish hues.
 COLORS = {
-    "XLK": "#1f77b4", "XLV": "#ff7f0e", "XLY": "#2ca02c", "XLP": "#d62728",
-    "XLRE": "#9467bd", "XLF": "#8c564b", "XLI": "#e377c2", "XLB": "#7f7f7f",
-    "XLE": "#bcbd22", "XLU": "#17becf", "XLC": "#393b79",
-    "IBIT": "#f7931a", "ETHA": "#627eea",
+    "XLK": "#5b9bd5", "XLV": "#41c9c9", "XLY": "#70ad47", "XLP": "#ff5b5b",
+    "XLRE": "#b18cff", "XLF": "#c49a6c", "XLI": "#ff86c8", "XLB": "#9aa6b2",
+    "XLE": "#ffd34d", "XLU": "#2dd4a7", "XLC": "#d8b4fe",
+    "IBIT": "#f7931a", "ETHA": "#8f9bff",
 }
-QUADRANTS = {  # (x_side, y_side) -> (fill, label, label_xy_factor)
-    "Leading":   "rgba(0,170,0,0.10)",
-    "Weakening": "rgba(230,195,0,0.13)",
-    "Lagging":   "rgba(220,0,0,0.10)",
-    "Improving": "rgba(0,120,220,0.10)",
+
+# Wall-Street palette
+BG = "#0a0f1c"          # page / paper
+PLOT_BG = "#0d1426"     # plot area
+GRID = "rgba(255,255,255,0.045)"
+AXIS_FG = "#9aa6bd"
+GOLD = "#c9a227"
+
+# Quadrant fills (subtle) + accent colour + Korean guide line.
+QUAD = {
+    "Leading":   ("rgba(46,200,130,0.08)",  "#2ec882", "선도",  "강세 · 모멘텀↑ — 시장 주도"),
+    "Weakening": ("rgba(230,190,60,0.08)",  "#e6be3c", "약화",  "강세지만 모멘텀↓ — 동력 둔화"),
+    "Lagging":   ("rgba(230,80,80,0.08)",   "#e65050", "후행",  "약세 · 모멘텀↓ — 시장 열위"),
+    "Improving": ("rgba(80,150,230,0.08)",  "#5096e6", "개선",  "약세지만 모멘텀↑ — 회복 신호"),
 }
 
 
@@ -98,15 +112,13 @@ def load_rrg() -> dict[str, pd.DataFrame]:
 def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None) -> go.Figure:
     fig = go.Figure()
 
-    # axis range from all points, padded, with 100 guaranteed visible
     xs = pd.concat([t["rs_ratio"] for t in tails.values()]) if tails else pd.Series([100])
     ys = pd.concat([t["rs_mom"] for t in tails.values()]) if tails else pd.Series([100])
-    pad_x = max(0.5, (xs.max() - xs.min()) * 0.12)
-    pad_y = max(0.5, (ys.max() - ys.min()) * 0.12)
+    pad_x = max(0.5, (xs.max() - xs.min()) * 0.14)
+    pad_y = max(0.5, (ys.max() - ys.min()) * 0.14)
     x0, x1 = min(xs.min() - pad_x, 99.0), max(xs.max() + pad_x, 101.0)
     y0, y1 = min(ys.min() - pad_y, 99.0), max(ys.max() + pad_y, 101.0)
 
-    # quadrant backgrounds
     rects = {
         "Leading":   (100, x1, 100, y1),
         "Weakening": (100, x1, y0, 100),
@@ -115,87 +127,116 @@ def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None) -> go.Fi
     }
     for name, (rx0, rx1, ry0, ry1) in rects.items():
         fig.add_shape(type="rect", x0=rx0, x1=rx1, y0=ry0, y1=ry1,
-                      fillcolor=QUADRANTS[name], line_width=0, layer="below")
-    fig.add_annotation(x=x1, y=y1, text="Leading", showarrow=False,
-                       xanchor="right", yanchor="top", font=dict(color="green", size=12))
-    fig.add_annotation(x=x1, y=y0, text="Weakening", showarrow=False,
-                       xanchor="right", yanchor="bottom", font=dict(color="#b59000", size=12))
-    fig.add_annotation(x=x0, y=y0, text="Lagging", showarrow=False,
-                       xanchor="left", yanchor="bottom", font=dict(color="red", size=12))
-    fig.add_annotation(x=x0, y=y1, text="Improving", showarrow=False,
-                       xanchor="left", yanchor="top", font=dict(color="#0a78dc", size=12))
+                      fillcolor=QUAD[name][0], line_width=0, layer="below")
+    corners = {"Leading": (x1, y1, "right", "top"), "Weakening": (x1, y0, "right", "bottom"),
+               "Lagging": (x0, y0, "left", "bottom"), "Improving": (x0, y1, "left", "top")}
+    for name, (ax, ay, xa, ya) in corners.items():
+        fig.add_annotation(x=ax, y=ay, text=name, showarrow=False, xanchor=xa, yanchor=ya,
+                           font=dict(color=QUAD[name][1], size=12), opacity=0.65)
 
-    # 100 cross
-    fig.add_hline(y=100, line=dict(color="black", width=1.5))
-    fig.add_vline(x=100, line=dict(color="black", width=1.5))
+    # 100 cross — muted gold
+    fig.add_hline(y=100, line=dict(color=GOLD, width=1.2))
+    fig.add_vline(x=100, line=dict(color=GOLD, width=1.2))
 
     for ticker, tail in tails.items():
-        color = COLORS.get(ticker, "#444")
+        color = COLORS.get(ticker, "#ccc")
         label = config.label(ticker)
-        op = 1.0 if (highlight is None or highlight == ticker) else 0.15
+        op = 1.0 if (highlight is None or highlight == ticker) else 0.12
 
         pts = tail[["rs_ratio", "rs_mom"]].to_numpy()
         smooth = curve.catmull_rom(pts)
         dates = tail.index.strftime("%Y-%m-%d").tolist()
 
-        # ① smooth curve
         fig.add_trace(go.Scatter(
             x=smooth[:, 0], y=smooth[:, 1], mode="lines",
-            line=dict(color=color, width=2.6), opacity=op,
+            line=dict(color=color, width=2.4), opacity=op,
             name=label, legendgroup=ticker, hoverinfo="skip",
         ))
-        # ② mid nodes (all but the last point)
         fig.add_trace(go.Scatter(
             x=pts[:-1, 0], y=pts[:-1, 1], mode="markers",
             marker=dict(color=color, size=6), opacity=op,
-            legendgroup=ticker, showlegend=False,
-            customdata=dates[:-1],
+            legendgroup=ticker, showlegend=False, customdata=dates[:-1],
             hovertemplate=(f"<b>{label}</b><br>날짜=%{{customdata}}"
                            "<br>RS-Ratio=%{x:.2f}<br>RS-Mom=%{y:.2f}<extra></extra>"),
         ))
-        # ③ endpoint (big marker + Korean label)
         fig.add_trace(go.Scatter(
             x=[pts[-1, 0]], y=[pts[-1, 1]], mode="markers+text",
-            marker=dict(color=color, size=14, line=dict(color="white", width=1.5)),
+            marker=dict(color=color, size=14, line=dict(color=BG, width=1.5)),
             opacity=op, text=[label], textposition="top center",
             textfont=dict(size=12, color=color),
-            legendgroup=ticker, showlegend=False,
-            customdata=[dates[-1]],
+            legendgroup=ticker, showlegend=False, customdata=[dates[-1]],
             hovertemplate=(f"<b>{label}</b> (최신)<br>날짜=%{{customdata}}"
                            "<br>RS-Ratio=%{x:.2f}<br>RS-Mom=%{y:.2f}<extra></extra>"),
         ))
 
     fig.update_layout(
-        height=720, margin=dict(l=40, r=20, t=30, b=40),
+        height=720, margin=dict(l=40, r=20, t=20, b=40),
+        paper_bgcolor=BG, plot_bgcolor=PLOT_BG, font=dict(color=AXIS_FG),
         xaxis=dict(title="RS-Ratio", range=[x0, x1], zeroline=False,
-                   showgrid=True, gridcolor="rgba(0,0,0,0.05)"),
+                   showgrid=True, gridcolor=GRID, color=AXIS_FG),
         yaxis=dict(title="RS-Momentum", range=[y0, y1], zeroline=False,
-                   showgrid=True, gridcolor="rgba(0,0,0,0.05)"),
-        legend=dict(groupclick="togglegroup", orientation="v",
-                    yanchor="top", y=1, xanchor="left", x=1.01),
-        plot_bgcolor="white", hovermode="closest",
+                   showgrid=True, gridcolor=GRID, color=AXIS_FG),
+        legend=dict(groupclick="togglegroup", orientation="v", yanchor="top",
+                    y=1, xanchor="left", x=1.01, font=dict(color="#cdd5e3")),
+        hovermode="closest",
     )
     return fig
+
+
+# ── small UI helpers ────────────────────────────────────────────────────────
+def quadrant_guide() -> None:
+    """Four colour-chipped one-liners explaining each quadrant."""
+    cols = st.columns(4)
+    for col, name in zip(cols, ["Leading", "Weakening", "Lagging", "Improving"]):
+        _, accent, kr, desc = QUAD[name]
+        col.markdown(
+            f"<div style='line-height:1.35'>"
+            f"<span style='display:inline-block;width:11px;height:11px;background:{accent};"
+            f"border-radius:2px;margin-right:7px'></span>"
+            f"<b style='color:{accent}'>{name}</b> "
+            f"<span style='color:#cdd5e3'>{kr}</span><br>"
+            f"<span style='color:#8893a8;font-size:0.85em'>{desc}</span></div>",
+            unsafe_allow_html=True,
+        )
 
 
 # ── app ─────────────────────────────────────────────────────────────────────
 def main() -> None:
     st.set_page_config(page_title="RRG — 섹터 & 크립토", layout="wide")
-    st.title("📈 Relative Rotation Graph — 미국 섹터 & 크립토 ETF")
-    st.caption(f"벤치마크: {config.BENCHMARK} · 모든 종목 RS = 100 × (종가 ÷ SPY종가)")
+    st.markdown(
+        f"<h2 style='margin-bottom:0;color:{GOLD};font-family:Georgia,serif'>"
+        "Relative Rotation Graph</h2>"
+        "<div style='color:#8893a8;margin-bottom:8px'>미국 섹터 &amp; 크립토 ETF · "
+        f"벤치마크 {config.BENCHMARK} · RS = 100 × (종가 ÷ SPY)</div>",
+        unsafe_allow_html=True,
+    )
 
     data = load_rrg()
     if not data:
         st.error("데이터를 불러오지 못했습니다. Supabase 연결/시크릿을 확인하세요.")
         st.stop()
 
-    # timeframe presets
-    preset = st.radio(
-        "타임프레임", PRESET_ORDER, index=PRESET_ORDER.index(DEFAULT_PRESET),
-        horizontal=True,
-    )
+    # timeframe: presets + custom date range
+    preset = st.radio("타임프레임", PRESET_ORDER + [CUSTOM],
+                      index=PRESET_ORDER.index(DEFAULT_PRESET), horizontal=True)
 
-    # sample tails; collect insufficient names
+    custom_start = custom_end = None
+    target_pts = 13
+    if preset == CUSTOM:
+        dmin = min(df.index.min() for df in data.values()).date()
+        dmax = max(df.index.max() for df in data.values()).date()
+        default_start = max(dmin, dmax - timedelta(days=90))
+        c1, c2 = st.columns([3, 1])
+        rng = c1.date_input("기간 선택", value=(default_start, dmax),
+                            min_value=dmin, max_value=dmax)
+        target_pts = c2.slider("곡선 점 수", 5, 20, 13)
+        if isinstance(rng, (tuple, list)) and len(rng) == 2:
+            custom_start, custom_end = rng
+        else:  # user mid-selection (single date) -> wait
+            st.info("기간의 시작과 종료 날짜를 모두 선택하세요.")
+            st.stop()
+
+    # build tails; collect insufficient names
     tails: dict[str, pd.DataFrame] = {}
     insufficient: list[str] = []
     for ticker in config.UNIVERSE:
@@ -203,31 +244,35 @@ def main() -> None:
         if df is None or df.empty:
             insufficient.append(config.label(ticker))
             continue
-        s = sample_tail(df, preset)
+        s = (sample_by_dates(df, custom_start, custom_end, target_pts)
+             if preset == CUSTOM else sample_tail(df, preset))
         if len(s) < MIN_POINTS:
             insufficient.append(config.label(ticker))
             continue
         tails[ticker] = s
 
-    # highlight selector
     options = ["전체"] + [config.label(t) for t in tails]
     pick = st.selectbox("강조할 종목 (나머지는 흐리게)", options, index=0)
     label_to_ticker = {config.label(t): t for t in tails}
     highlight = None if pick == "전체" else label_to_ticker.get(pick)
 
     if not tails:
-        st.warning("표시할 데이터가 부족합니다.")
+        st.warning("선택한 기간에 표시할 데이터가 부족합니다.")
         st.stop()
 
     st.plotly_chart(build_figure(tails, highlight), width="stretch")
 
-    # footer: data freshness + insufficient notice
+    # footer: quadrant guide + freshness + insufficient notice
+    st.divider()
+    quadrant_guide()
+    st.divider()
     latest = max(t.index.max() for t in tails.values()).strftime("%Y-%m-%d")
-    rng, step = PRESETS[preset]
-    st.caption(
-        f"최신 데이터: **{latest}** · 프리셋 {preset} (최근 {rng}거래일, ~{step}일 간격) · "
-        f"표시 종목 {len(tails)}개 · 범례 클릭으로 개별 토글"
-    )
+    if preset == CUSTOM:
+        span = f"사용자 지정 {custom_start}~{custom_end} (~{target_pts}점)"
+    else:
+        rng_td, step = PRESETS[preset]
+        span = f"{preset} (최근 {rng_td}거래일, ~{step}일 간격)"
+    st.caption(f"최신 데이터 **{latest}** · {span} · 표시 종목 {len(tails)}개 · 범례 클릭으로 개별 토글")
     if insufficient:
         st.caption("⚠️ 데이터 부족: " + ", ".join(insufficient))
 

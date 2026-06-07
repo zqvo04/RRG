@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 from rrg import curve
-from rrg.sampling import PRESETS, sample_tail
+from rrg.sampling import PRESETS, sample_by_dates, sample_range, sample_tail
 
 
 def make_df(n: int) -> pd.DataFrame:
@@ -49,6 +49,34 @@ def test_sample_short_series_uses_what_exists():
     out = sample_tail(df, "1Y")
     assert len(out) == 4
     assert out.index[-1] == df.index[-1]
+
+
+# ── custom range / date sampling ────────────────────────────────────────────
+def test_sample_range_anchors_endpoints():
+    df = make_df(300)
+    out = sample_range(df, range_td=100, step=10)
+    tail = df.iloc[-100:]
+    assert out.index[-1] == tail.index[-1]
+    assert out.index[0] == tail.index[0]
+    assert 8 <= len(out) <= 13
+
+
+def test_sample_by_dates_window_and_targetcount():
+    df = make_df(300)
+    start, end = df.index[100].date(), df.index[180].date()
+    out = sample_by_dates(df, start, end, target_points=13)
+    # all sampled rows fall inside the requested window
+    assert out.index.min() >= pd.Timestamp(start)
+    assert out.index.max() <= pd.Timestamp(end)
+    # roughly the requested number of points
+    assert abs(len(out) - 13) <= 3
+
+
+def test_sample_by_dates_empty_window():
+    df = make_df(50)
+    future = (df.index[-1] + pd.Timedelta(days=400)).date()
+    out = sample_by_dates(df, future, future, target_points=13)
+    assert len(out) == 0
 
 
 # ── catmull-rom ─────────────────────────────────────────────────────────────
