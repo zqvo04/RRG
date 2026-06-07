@@ -26,10 +26,11 @@ ZSCORE_DDOF: int = 0         # rolling std uses population std (deterministic)
 # Below this the warm-up guard returns NaN (no interpolation, no fill).
 WARMUP_BARS: int = RATIO_WINDOW + MOM_WINDOW  # 84
 
-# ── Tracking universe ───────────────────────────────────────────────────────
-# Ticker -> Korean display label. Order here defines default legend order.
-# Benchmark (SPY) is intentionally absent: every name's RS is measured vs SPY.
-UNIVERSE: dict[str, str] = {
+# ── Tracking universe (grouped) ─────────────────────────────────────────────
+# Tickers are organised into toggle groups. The app shows "기본 섹터" + "크립토"
+# by default and keeps "세부섹터" off until the user enables it.
+# Ticker -> Korean display label. Benchmark (SPY) is intentionally absent.
+SECTOR_TICKERS: dict[str, str] = {
     "XLK": "기술",
     "XLV": "헬스케어",
     "XLY": "임의소비재",
@@ -41,8 +42,40 @@ UNIVERSE: dict[str, str] = {
     "XLE": "에너지",
     "XLU": "유틸리티",
     "XLC": "커뮤니케이션",
+}
+CRYPTO_TICKERS: dict[str, str] = {
     "IBIT": "비트코인",
     "ETHA": "이더리움",
+}
+SUBSECTOR_TICKERS: dict[str, str] = {
+    "ARKG": "바이오테크",
+    "THNR": "비만치료제",
+    "NLR": "소형원전",
+    "ITA": "방위산업",
+    "SOXX": "비메모리",
+    "MAGS": "빅테크M7",
+    "QTUM": "양자컴퓨터",
+    "DRAM": "메모리반도체",
+}
+
+# Group name -> {ticker: label}; plus default visibility per group.
+GROUPS: dict[str, dict[str, str]] = {
+    "기본 섹터": SECTOR_TICKERS,
+    "크립토": CRYPTO_TICKERS,
+    "세부섹터": SUBSECTOR_TICKERS,
+}
+GROUP_DEFAULT_ON: dict[str, bool] = {
+    "기본 섹터": True,
+    "크립토": True,
+    "세부섹터": False,   # hidden until the user toggles it on
+}
+
+# Flattened ticker -> label (group order preserved) and ticker -> group.
+UNIVERSE: dict[str, str] = {
+    t: lbl for grp in GROUPS.values() for t, lbl in grp.items()
+}
+GROUP_OF: dict[str, str] = {
+    t: name for name, grp in GROUPS.items() for t in grp
 }
 
 # Tickers we actually download (universe + benchmark, deduped, order-stable).

@@ -38,10 +38,15 @@ CUSTOM = "사용자 지정"
 
 # Per-ticker colours — vivid on the dark canvas; crypto keep brand-ish hues.
 COLORS = {
+    # 기본 섹터
     "XLK": "#5b9bd5", "XLV": "#41c9c9", "XLY": "#70ad47", "XLP": "#ff5b5b",
     "XLRE": "#b18cff", "XLF": "#c49a6c", "XLI": "#ff86c8", "XLB": "#9aa6b2",
     "XLE": "#ffd34d", "XLU": "#2dd4a7", "XLC": "#d8b4fe",
+    # 크립토
     "IBIT": "#f7931a", "ETHA": "#8f9bff",
+    # 세부섹터
+    "ARKG": "#ff7847", "THNR": "#2dd4bf", "NLR": "#a3e635", "ITA": "#38bdf8",
+    "SOXX": "#e879f9", "MAGS": "#fb7185", "QTUM": "#c084fc", "DRAM": "#fbbf24",
 }
 
 # Wall-Street palette
@@ -171,7 +176,8 @@ def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None) -> go.Fi
 
     fig.update_layout(
         height=720, margin=dict(l=40, r=20, t=20, b=40),
-        paper_bgcolor=BG, plot_bgcolor=PLOT_BG, font=dict(color=AXIS_FG),
+        paper_bgcolor=BG, plot_bgcolor=PLOT_BG,
+        font=dict(color=AXIS_FG, family="Inter, 'Noto Sans KR', sans-serif"),
         xaxis=dict(title="RS-Ratio", range=[x0, x1], zeroline=False,
                    showgrid=True, gridcolor=GRID, color=AXIS_FG),
         yaxis=dict(title="RS-Momentum", range=[y0, y1], zeroline=False,
@@ -201,12 +207,25 @@ def quadrant_guide() -> None:
 
 
 # ── app ─────────────────────────────────────────────────────────────────────
+FONT_STACK = "'Inter','Pretendard','Noto Sans KR',-apple-system,sans-serif"
+
+
 def main() -> None:
     st.set_page_config(page_title="RRG — 섹터 & 크립토", layout="wide")
+    # Soft modern type (Inter + Korean Pretendard/Noto), applied app-wide.
     st.markdown(
-        f"<h2 style='margin-bottom:0;color:{GOLD};font-family:Georgia,serif'>"
-        "Relative Rotation Graph</h2>"
-        "<div style='color:#8893a8;margin-bottom:8px'>미국 섹터 &amp; 크립토 ETF · "
+        "<style>"
+        "@import url('https://fonts.googleapis.com/css2?"
+        "family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');"
+        f"html,body,[class*='css'],.stApp{{font-family:{FONT_STACK};"
+        "-webkit-font-smoothing:antialiased;letter-spacing:-0.01em}}"
+        "</style>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f"<h2 style='margin-bottom:0;color:{GOLD};font-family:{FONT_STACK};"
+        "font-weight:700;letter-spacing:-0.02em'>Relative Rotation Graph</h2>"
+        "<div style='color:#8893a8;margin-bottom:10px'>미국 섹터 &amp; 크립토 ETF · "
         f"벤치마크 {config.BENCHMARK} · RS = 100 × (종가 ÷ SPY)</div>",
         unsafe_allow_html=True,
     )
@@ -214,6 +233,17 @@ def main() -> None:
     data = load_rrg()
     if not data:
         st.error("데이터를 불러오지 못했습니다. Supabase 연결/시크릿을 확인하세요.")
+        st.stop()
+
+    # group toggles (기본 섹터 / 크립토 on by default; 세부섹터 off)
+    gcols = st.columns(len(config.GROUPS))
+    active_groups = {
+        name: col.checkbox(name, value=config.GROUP_DEFAULT_ON[name])
+        for col, name in zip(gcols, config.GROUPS)
+    }
+    candidates = [t for t in config.UNIVERSE if active_groups[config.GROUP_OF[t]]]
+    if not candidates:
+        st.warning("표시할 그룹을 하나 이상 선택하세요.")
         st.stop()
 
     # timeframe: presets + custom date range
@@ -236,10 +266,10 @@ def main() -> None:
             st.info("기간의 시작과 종료 날짜를 모두 선택하세요.")
             st.stop()
 
-    # build tails; collect insufficient names
+    # build tails; collect insufficient names (only for active groups)
     tails: dict[str, pd.DataFrame] = {}
     insufficient: list[str] = []
-    for ticker in config.UNIVERSE:
+    for ticker in candidates:
         df = data.get(ticker)
         if df is None or df.empty:
             insufficient.append(config.label(ticker))
