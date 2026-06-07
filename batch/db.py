@@ -194,7 +194,10 @@ def load_raw_close(client: Client, tickers: Iterable[str], interval: str = "D"):
             "GET",
             f"raw_prices?select=bar_date,ticker,adj_close"
             f"&interval=eq.{interval}&ticker=in.({in_list})"
-            f"&order=bar_date.asc&limit={_PAGE}&offset={offset}",
+            # Order by the unique (ticker, bar_date) key so offset paging is
+            # stable — ordering by bar_date alone is non-deterministic for the
+            # many same-date rows and would duplicate/skip across page bounds.
+            f"&order=ticker.asc,bar_date.asc&limit={_PAGE}&offset={offset}",
         )
         page = json.loads(body)
         recs.extend(page)
@@ -205,6 +208,8 @@ def load_raw_close(client: Client, tickers: Iterable[str], interval: str = "D"):
     if not recs:
         return pd.DataFrame()
     df = pd.DataFrame(recs)
+    # Defensive: collapse any accidental dupes before reshaping.
+    df = df.drop_duplicates(subset=["bar_date", "ticker"], keep="last")
     wide = df.pivot(index="bar_date", columns="ticker", values="adj_close")
     wide.index = pd.to_datetime(wide.index)
     return wide.sort_index()
