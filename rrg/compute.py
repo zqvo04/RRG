@@ -48,13 +48,18 @@ def zscore_rolling(
     *,
     std_floor: float = config.STD_FLOOR,
     ddof: int = config.ZSCORE_DDOF,
+    min_periods: int | None = None,
 ) -> pd.Series:
     """Rolling z-score: (x - SMA) / max(rolling_std, eps).
 
     Mean and std are simple (SMA-based) rolling statistics over ``window`` bars.
-    The std floor (epsilon) prevents division by zero on flat windows.
+    ``min_periods`` (default = ``window``) sets how many observations a window
+    needs before a value is produced; a smaller value yields partial z-scores
+    early / for short series. The std floor (epsilon) prevents division by zero.
     """
-    roll = series.rolling(window=window, min_periods=window)
+    if min_periods is None:
+        min_periods = window
+    roll = series.rolling(window=window, min_periods=min_periods)
     mean = roll.mean()
     std = roll.std(ddof=ddof)
     # Clamp std up to the floor element-wise (preserves NaN where window is short).
@@ -111,12 +116,14 @@ def compute_rrg(
     rs_smooth = ema(rs, ema_span)              # EMA(RS)
 
     # 4) RS-Ratio (x-axis): z-score of smoothed RS over ratio_window.
-    rs_ratio = _axis(zscore_rolling(rs_smooth, ratio_window))
+    rs_ratio = _axis(zscore_rolling(
+        rs_smooth, ratio_window, min_periods=config.RATIO_MIN_PERIODS))
 
     # 5) Momentum: bar-over-bar ratio of RS-Ratio, smoothed, then z-scored.
     mom = rs_ratio / rs_ratio.shift(1)         # M_t
     mom_smooth = ema(mom, ema_span)            # EMA(M)
-    rs_mom = _axis(zscore_rolling(mom_smooth, mom_window))
+    rs_mom = _axis(zscore_rolling(
+        mom_smooth, mom_window, min_periods=config.MOM_MIN_PERIODS))
 
     out = pd.DataFrame({"rs_ratio": rs_ratio, "rs_mom": rs_mom})
     # Reindex onto the full aligned range (cosmetic: keeps every co-observed bar).

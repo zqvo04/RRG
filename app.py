@@ -114,8 +114,15 @@ def load_rrg() -> dict[str, pd.DataFrame]:
 
 
 # ── figure ──────────────────────────────────────────────────────────────────
-def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None) -> go.Figure:
+def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None,
+                 mobile: bool = False) -> go.Figure:
     fig = go.Figure()
+    # touch-/screen-aware sizing
+    line_w = 2.2 if mobile else 2.4
+    mid_sz = 7 if mobile else 6
+    end_sz = 15 if mobile else 14
+    lbl_sz = 12 if mobile else 12
+    corner_sz = 11 if mobile else 12
 
     xs = pd.concat([t["rs_ratio"] for t in tails.values()]) if tails else pd.Series([100])
     ys = pd.concat([t["rs_mom"] for t in tails.values()]) if tails else pd.Series([100])
@@ -137,7 +144,7 @@ def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None) -> go.Fi
                "Lagging": (x0, y0, "left", "bottom"), "Improving": (x0, y1, "left", "top")}
     for name, (ax, ay, xa, ya) in corners.items():
         fig.add_annotation(x=ax, y=ay, text=name, showarrow=False, xanchor=xa, yanchor=ya,
-                           font=dict(color=QUAD[name][1], size=12), opacity=0.65)
+                           font=dict(color=QUAD[name][1], size=corner_sz), opacity=0.65)
 
     # 100 cross — muted gold
     fig.add_hline(y=100, line=dict(color=GOLD, width=1.2))
@@ -154,71 +161,96 @@ def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None) -> go.Fi
 
         fig.add_trace(go.Scatter(
             x=smooth[:, 0], y=smooth[:, 1], mode="lines",
-            line=dict(color=color, width=2.4), opacity=op,
+            line=dict(color=color, width=line_w), opacity=op,
             name=label, legendgroup=ticker, hoverinfo="skip",
         ))
         fig.add_trace(go.Scatter(
             x=pts[:-1, 0], y=pts[:-1, 1], mode="markers",
-            marker=dict(color=color, size=6), opacity=op,
+            marker=dict(color=color, size=mid_sz), opacity=op,
             legendgroup=ticker, showlegend=False, customdata=dates[:-1],
             hovertemplate=(f"<b>{label}</b><br>날짜=%{{customdata}}"
                            "<br>RS-Ratio=%{x:.2f}<br>RS-Mom=%{y:.2f}<extra></extra>"),
         ))
         fig.add_trace(go.Scatter(
             x=[pts[-1, 0]], y=[pts[-1, 1]], mode="markers+text",
-            marker=dict(color=color, size=14, line=dict(color=BG, width=1.5)),
+            marker=dict(color=color, size=end_sz, line=dict(color=BG, width=1.5)),
             opacity=op, text=[label], textposition="top center",
-            textfont=dict(size=12, color=color),
+            textfont=dict(size=lbl_sz, color=color),
             legendgroup=ticker, showlegend=False, customdata=[dates[-1]],
             hovertemplate=(f"<b>{label}</b> (최신)<br>날짜=%{{customdata}}"
                            "<br>RS-Ratio=%{x:.2f}<br>RS-Mom=%{y:.2f}<extra></extra>"),
         ))
 
+    # Mobile: square-ish chart, legend wraps under the plot (touch-friendly).
+    # Desktop: taller chart, vertical legend on the right.
+    if mobile:
+        legend = dict(groupclick="togglegroup", orientation="h", yanchor="top",
+                      y=-0.12, xanchor="left", x=0, font=dict(color="#cdd5e3", size=11))
+        layout_extra = dict(height=540, margin=dict(l=8, r=8, t=8, b=8))
+    else:
+        legend = dict(groupclick="togglegroup", orientation="v", yanchor="top",
+                      y=1, xanchor="left", x=1.01, font=dict(color="#cdd5e3"))
+        layout_extra = dict(height=720, margin=dict(l=40, r=20, t=20, b=40))
+
     fig.update_layout(
-        height=720, margin=dict(l=40, r=20, t=20, b=40),
         paper_bgcolor=BG, plot_bgcolor=PLOT_BG,
         font=dict(color=AXIS_FG, family="Inter, 'Noto Sans KR', sans-serif"),
         xaxis=dict(title="RS-Ratio", range=[x0, x1], zeroline=False,
                    showgrid=True, gridcolor=GRID, color=AXIS_FG),
         yaxis=dict(title="RS-Momentum", range=[y0, y1], zeroline=False,
                    showgrid=True, gridcolor=GRID, color=AXIS_FG),
-        legend=dict(groupclick="togglegroup", orientation="v", yanchor="top",
-                    y=1, xanchor="left", x=1.01, font=dict(color="#cdd5e3")),
-        hovermode="closest",
+        legend=legend, hovermode="closest", **layout_extra,
     )
     return fig
 
 
 # ── small UI helpers ────────────────────────────────────────────────────────
 def quadrant_guide() -> None:
-    """Four colour-chipped one-liners explaining each quadrant."""
-    cols = st.columns(4)
-    for col, name in zip(cols, ["Leading", "Weakening", "Lagging", "Improving"]):
+    """Four colour-chipped one-liners explaining each quadrant.
+
+    Rendered as a flex-wrap row so it shows 4-across on wide screens and folds
+    to 2-across (or 1) on phones — no fixed column count.
+    """
+    chips = []
+    for name in ["Leading", "Weakening", "Lagging", "Improving"]:
         _, accent, kr, desc = QUAD[name]
-        col.markdown(
-            f"<div style='line-height:1.35'>"
+        chips.append(
+            f"<div style='flex:1 1 150px;min-width:150px;line-height:1.35'>"
             f"<span style='display:inline-block;width:11px;height:11px;background:{accent};"
             f"border-radius:2px;margin-right:7px'></span>"
             f"<b style='color:{accent}'>{name}</b> "
             f"<span style='color:#cdd5e3'>{kr}</span><br>"
-            f"<span style='color:#8893a8;font-size:0.85em'>{desc}</span></div>",
-            unsafe_allow_html=True,
+            f"<span style='color:#8893a8;font-size:0.85em'>{desc}</span></div>"
         )
+    st.markdown(
+        "<div style='display:flex;flex-wrap:wrap;gap:10px 18px'>" + "".join(chips) + "</div>",
+        unsafe_allow_html=True,
+    )
 
 
 # ── app ─────────────────────────────────────────────────────────────────────
 FONT_STACK = "'Inter','Pretendard','Noto Sans KR',-apple-system,sans-serif"
 
 
+def detect_mobile_default() -> bool:
+    """Best-effort phone detection from the request User-Agent (override-able)."""
+    try:
+        ua = st.context.headers.get("User-Agent", "")
+    except Exception:
+        return False
+    return any(k in ua for k in ("Mobi", "Android", "iPhone", "iPod", "iPad"))
+
+
 def main() -> None:
     st.set_page_config(page_title="RRG — 섹터 & 크립토", layout="wide")
-    # Soft modern type (Inter + Korean Pretendard/Noto), applied app-wide.
+    # Soft modern type (Inter + Korean Noto) + tighter padding on small screens.
     st.markdown(
         "<style>"
         "@import url('https://fonts.googleapis.com/css2?"
         "family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');"
         f"html,body,[class*='css'],.stApp{{font-family:{FONT_STACK};"
         "-webkit-font-smoothing:antialiased;letter-spacing:-0.01em}}"
+        "@media (max-width:640px){.block-container{padding:0.7rem 0.6rem !important}}"
         "</style>",
         unsafe_allow_html=True,
     )
@@ -235,15 +267,42 @@ def main() -> None:
         st.error("데이터를 불러오지 못했습니다. Supabase 연결/시크릿을 확인하세요.")
         st.stop()
 
-    # group toggles (기본 섹터 / 크립토 on by default; 세부섹터 off)
-    gcols = st.columns(len(config.GROUPS))
-    active_groups = {
-        name: col.checkbox(name, value=config.GROUP_DEFAULT_ON[name])
-        for col, name in zip(gcols, config.GROUPS)
-    }
-    candidates = [t for t in config.UNIVERSE if active_groups[config.GROUP_OF[t]]]
+    # group pool (기본 섹터 / 크립토 on by default; 세부섹터 off) + mobile mode
+    gcols = st.columns(len(config.GROUPS) + 1)
+    for i, name in enumerate(config.GROUPS):
+        gcols[i].checkbox(name, value=config.GROUP_DEFAULT_ON[name], key=f"grp::{name}")
+    mobile = gcols[-1].toggle("📱 모바일", value=detect_mobile_default(),
+                              help="범례를 하단으로 옮기고 차트를 화면 폭에 맞춥니다")
+
+    def pool() -> list[str]:
+        """Tickers whose group is currently checked (reads live widget state)."""
+        return [t for t in config.UNIVERSE
+                if st.session_state.get(f"grp::{config.GROUP_OF[t]}",
+                                        config.GROUP_DEFAULT_ON[config.GROUP_OF[t]])]
+
+    candidates = pool()
     if not candidates:
         st.warning("표시할 그룹을 하나 이상 선택하세요.")
+        st.stop()
+
+    # per-ticker show/hide with master on/off (works on desktop & mobile)
+    SHOWN = "shown_tickers"
+    if SHOWN not in st.session_state:
+        st.session_state[SHOWN] = list(candidates)          # default: all in pool
+    st.session_state[SHOWN] = [t for t in st.session_state[SHOWN] if t in candidates]
+
+    def _show_all() -> None:
+        st.session_state[SHOWN] = pool()
+
+    def _show_none() -> None:
+        st.session_state[SHOWN] = []
+
+    bc = st.columns([1, 1, 4])
+    bc[0].button("전체 켜기", on_click=_show_all)
+    bc[1].button("전체 끄기", on_click=_show_none)
+    shown = st.multiselect("표시 종목", candidates, key=SHOWN, format_func=config.label)
+    if not shown:
+        st.info("표시할 종목이 없습니다 — ‘전체 켜기’를 누르거나 종목을 선택하세요.")
         st.stop()
 
     # timeframe: presets + custom date range
@@ -266,10 +325,10 @@ def main() -> None:
             st.info("기간의 시작과 종료 날짜를 모두 선택하세요.")
             st.stop()
 
-    # build tails; collect insufficient names (only for active groups)
+    # build tails; collect insufficient names (only among shown tickers)
     tails: dict[str, pd.DataFrame] = {}
     insufficient: list[str] = []
-    for ticker in candidates:
+    for ticker in shown:
         df = data.get(ticker)
         if df is None or df.empty:
             insufficient.append(config.label(ticker))
@@ -290,7 +349,11 @@ def main() -> None:
         st.warning("선택한 기간에 표시할 데이터가 부족합니다.")
         st.stop()
 
-    st.plotly_chart(build_figure(tails, highlight), width="stretch")
+    st.plotly_chart(
+        build_figure(tails, highlight, mobile=mobile), width="stretch",
+        config={"responsive": True, "displaylogo": False,
+                "displayModeBar": not mobile, "scrollZoom": False},
+    )
 
     # footer: quadrant guide + freshness + insufficient notice
     st.divider()
@@ -302,7 +365,8 @@ def main() -> None:
     else:
         rng_td, step = PRESETS[preset]
         span = f"{preset} (최근 {rng_td}거래일, ~{step}일 간격)"
-    st.caption(f"최신 데이터 **{latest}** · {span} · 표시 종목 {len(tails)}개 · 범례 클릭으로 개별 토글")
+    st.caption(f"최신 데이터 **{latest}** · {span} · 표시 종목 {len(tails)}개 · "
+               "‘표시 종목’ 또는 전체 켜기/끄기로 토글")
     if insufficient:
         st.caption("⚠️ 데이터 부족: " + ", ".join(insufficient))
 

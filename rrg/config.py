@@ -22,9 +22,18 @@ STD_FLOOR: float = 1e-8      # epsilon to avoid divide-by-zero in z-score
 CLIP: float = 3.5            # z-score clamp (both sides) before scaling
 ZSCORE_DDOF: int = 0         # rolling std uses population std (deterministic)
 
+# Minimum bars the rolling z-scores need before emitting a (partial) value.
+# These are < the full windows so short-history names (e.g. a just-listed ETF)
+# still plot from whatever data exists. For any bar that already has a FULL
+# window of history the result is identical to the strict calc, so established
+# names' displayed (recent) values are unchanged — hence min_periods is left
+# OUT of PARAM_HASH and no re-backfill is needed.
+RATIO_MIN_PERIODS: int = 20
+MOM_MIN_PERIODS: int = 10
+
 # Minimum number of valid bars required before any non-NaN value is emitted.
 # Below this the warm-up guard returns NaN (no interpolation, no fill).
-WARMUP_BARS: int = RATIO_WINDOW + MOM_WINDOW  # 84
+WARMUP_BARS: int = RATIO_MIN_PERIODS + MOM_MIN_PERIODS  # 30
 
 # ── Tracking universe (grouped) ─────────────────────────────────────────────
 # Tickers are organised into toggle groups. The app shows "기본 섹터" + "크립토"

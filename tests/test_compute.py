@@ -96,6 +96,19 @@ def test_warmup_guard_all_nan_when_too_short():
     assert out["rs_mom"].isna().all()
 
 
+def test_short_history_emits_partial_values(synthetic):
+    # A series too short for the full 63/21 windows but >= WARMUP_BARS must still
+    # emit some non-NaN tail (partial-window z-scores), not stay all-NaN.
+    p, b = synthetic
+    n = 50  # < RATIO_WINDOW (63) but > WARMUP_BARS (30)
+    out = compute.compute_rrg(p.iloc[:n], b.iloc[:n])
+    assert len(out) == n
+    assert out["rs_ratio"].notna().any()
+    assert out["rs_mom"].notna().any()
+    assert np.isfinite(out["rs_ratio"].iloc[-1])
+    assert np.isfinite(out["rs_mom"].iloc[-1])
+
+
 def test_warmup_produces_values_once_enough_history(synthetic):
     p, b = synthetic
     out = compute.compute_rrg(p, b)
@@ -131,8 +144,11 @@ def test_rs_mom_final_value_matches_reference(synthetic):
     full_idx = p.index
     n = len(rs_smooth)
     ratio_z = np.full(n, np.nan)
-    for i in range(config.RATIO_WINDOW - 1, n):
-        w = rs_smooth[i - config.RATIO_WINDOW + 1 : i + 1]
+    # partial windows from RATIO_MIN_PERIODS (matches rolling min_periods)
+    for i in range(config.RATIO_MIN_PERIODS - 1, n):
+        w = rs_smooth[max(0, i - config.RATIO_WINDOW + 1) : i + 1]
+        if len(w) < config.RATIO_MIN_PERIODS:
+            continue
         std = max(float(w.std()), config.STD_FLOOR)
         ratio_z[i] = (rs_smooth[i] - w.mean()) / std
     ratio = 100.0 + np.clip(ratio_z, -config.CLIP, config.CLIP) * config.SCALE
