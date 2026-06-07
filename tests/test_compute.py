@@ -244,4 +244,5 @@ def test_universe_excludes_benchmark():
     assert len(config.UNIVERSE) == 21          # 11 sectors + 2 crypto + 8 sub
     # every ticker maps to exactly one group, default-off group hidden initially
     assert set(config.GROUP_OF) == set(config.UNIVERSE)
-    assert config.GROUP_DEFAULT_ON["세부섹터"] is False
+    assert config.GROUP_DEFAULT_ON["세부"] is False
+    assert list(config.GROUPS) == ["기본", "세부"]

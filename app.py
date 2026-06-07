@@ -11,6 +11,7 @@ Deploy:       Streamlit Community Cloud (defaults baked in; no secrets needed)
 from __future__ import annotations
 
 import json
+import math
 import os
 import urllib.request
 from datetime import timedelta
@@ -35,8 +36,6 @@ DEFAULT_ANON = (
 )
 
 CUSTOM = "사용자 지정"
-# Newcomer-friendly default view: a few flagship names.
-DEFAULT_SHOWN = ["XLK", "XLV", "IBIT", "MAGS"]   # 기술 · 헬스케어 · 비트코인 · 빅테크M7
 
 # Per-ticker colours — vivid on the dark canvas; crypto keep brand-ish hues.
 COLORS = {
@@ -181,9 +180,13 @@ def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None,
             hovertemplate=(f"<b>{label}</b><br>날짜=%{{customdata}}"
                            "<br>RS-Ratio=%{x:.2f}<br>RS-Mom=%{y:.2f}<extra></extra>"),
         ))
+        # endpoint = arrowhead pointing in the direction of travel (older->newest)
+        dx, dy = pts[-1, 0] - pts[-2, 0], pts[-1, 1] - pts[-2, 1]
+        heading = math.degrees(math.atan2(dx, dy)) if (dx or dy) else 0.0
         fig.add_trace(go.Scatter(
             x=[pts[-1, 0]], y=[pts[-1, 1]], mode="markers+text",
-            marker=dict(color=color, size=end_sz, line=dict(color=BG, width=1.5)),
+            marker=dict(color=color, size=end_sz + 4, symbol="arrow", angle=heading,
+                        line=dict(color=BG, width=1)),
             opacity=op, text=[label], textposition="top center",
             textfont=dict(size=lbl_sz, color=color),
             legendgroup=ticker, showlegend=False, customdata=[dates[-1]],
@@ -253,6 +256,71 @@ def detect_mobile_default() -> bool:
     return any(k in ua for k in ("Mobi", "Android", "iPhone", "iPod", "iPad"))
 
 
+# ── ticker selection state + control panel ──────────────────────────────────
+def _ticker_key(t: str) -> str:
+    return f"tk::{t}"
+
+
+def _init_ticker_state() -> None:
+    """Seed each ticker's checkbox: base group on, sub group off (once)."""
+    for t in config.UNIVERSE:
+        k = _ticker_key(t)
+        if k not in st.session_state:
+            st.session_state[k] = config.GROUP_DEFAULT_ON[config.GROUP_OF[t]]
+
+
+def _set_all(value: bool) -> None:
+    for t in config.UNIVERSE:
+        st.session_state[_ticker_key(t)] = value
+
+
+def _reset_base() -> None:
+    for t in config.UNIVERSE:
+        st.session_state[_ticker_key(t)] = config.GROUP_DEFAULT_ON[config.GROUP_OF[t]]
+
+
+def render_controls(data: dict):
+    """Right-hand (mobile: bottom) panel: timeframe + grouped ticker checklist."""
+    st.markdown("**기간**")
+    preset = st.radio("기간", PRESET_ORDER + [CUSTOM],
+                      index=PRESET_ORDER.index(DEFAULT_PRESET),
+                      horizontal=True, label_visibility="collapsed")
+    cstart = cend = None
+    target_pts = 13
+    if preset == CUSTOM:
+        dmin = min(df.index.min() for df in data.values()).date()
+        dmax = max(df.index.max() for df in data.values()).date()
+        default_start = max(dmin, dmax - timedelta(days=90))
+        rng = st.date_input("기간 선택", value=(default_start, dmax),
+                            min_value=dmin, max_value=dmax)
+        target_pts = st.slider("곡선 점 수", 5, 20, 13)
+        if isinstance(rng, (tuple, list)) and len(rng) == 2:
+            cstart, cend = rng
+
+    st.divider()
+    st.markdown("**종목**")
+    qa = st.columns(3)
+    qa[0].button("기본", on_click=_reset_base, use_container_width=True,
+                 help="기본 종목만 켜기")
+    qa[1].button("전체", on_click=_set_all, args=(True,), use_container_width=True)
+    qa[2].button("해제", on_click=_set_all, args=(False,), use_container_width=True)
+    for gname, gtk in config.GROUPS.items():
+        st.markdown(f"<div style='color:{GOLD};font-weight:600;font-size:.9em;"
+                    f"margin:8px 0 2px'>{gname}</div>", unsafe_allow_html=True)
+        for t in gtk:
+            sw, cb = st.columns([0.16, 0.84], gap="small")
+            sw.markdown(f"<div style='width:12px;height:12px;border-radius:3px;"
+                        f"background:{COLORS.get(t, '#888')};margin-top:9px'></div>",
+                        unsafe_allow_html=True)
+            cb.checkbox(config.label(t), key=_ticker_key(t))
+    shown = [t for t in config.UNIVERSE if st.session_state.get(_ticker_key(t))]
+
+    st.divider()
+    hi_pick = st.selectbox("강조 (나머지 흐리게)",
+                           ["전체"] + [config.label(t) for t in shown])
+    return preset, shown, cstart, cend, target_pts, hi_pick
+
+
 def main() -> None:
     st.set_page_config(page_title="RRG — 섹터 & 크립토", layout="wide")
     # Soft modern type (Inter + Korean Noto) + tighter padding on small screens.
@@ -279,103 +347,68 @@ def main() -> None:
         st.error("데이터를 불러오지 못했습니다. Supabase 연결/시크릿을 확인하세요.")
         st.stop()
 
-    # ── all controls live in the sidebar (clean first screen) ───────────────
-    all_tk = list(config.UNIVERSE)
-    SHOWN = "shown_tickers"
-    if SHOWN not in st.session_state:
-        st.session_state[SHOWN] = [t for t in DEFAULT_SHOWN if t in all_tk]
+    _init_ticker_state()
+    MKEY = "mobile_mode"
+    if MKEY not in st.session_state:
+        st.session_state[MKEY] = detect_mobile_default()
+    mobile = st.session_state[MKEY]
 
-    def _add_group(tickers: list[str]) -> None:
-        cur = set(st.session_state.get(SHOWN, [])) | set(tickers)
-        st.session_state[SHOWN] = [t for t in config.UNIVERSE if t in cur]
+    # Layout: chart on the left, controls on the right (stacked on mobile).
+    if mobile:
+        chart_slot, ctrl_slot = st.container(), st.container()
+    else:
+        chart_slot, ctrl_slot = st.columns([4, 1.4], gap="large")
 
-    with st.sidebar:
-        st.markdown("#### 종목 선택")
-        mc = st.columns(2)
-        mc[0].button("전체 켜기", use_container_width=True,
-                     on_click=lambda: st.session_state.__setitem__(SHOWN, all_tk))
-        mc[1].button("전체 끄기", use_container_width=True,
-                     on_click=lambda: st.session_state.__setitem__(SHOWN, []))
-        with st.expander("그룹으로 추가"):
-            for gname, gtk in config.GROUPS.items():
-                st.button(f"＋ {gname}", key=f"add::{gname}", use_container_width=True,
-                          on_click=_add_group, args=(list(gtk),))
-        shown = st.multiselect("표시 종목", all_tk, key=SHOWN, format_func=config.label)
-        st.divider()
-        hi_pick = st.selectbox("강조 (나머지 흐리게)",
-                               ["전체"] + [config.label(t) for t in shown])
-        st.divider()
-        mobile = st.toggle("📱 모바일 모드", value=detect_mobile_default(),
-                           help="범례를 차트 하단으로 옮기고 화면 폭에 맞춥니다")
+    with ctrl_slot:
+        st.toggle("📱 모바일 모드", key=MKEY,
+                  help="범례를 차트 하단으로 옮기고 글자/선을 작게 합니다")
+        preset, shown, cstart, cend, target_pts, hi_pick = render_controls(data)
 
-    if not shown:
-        st.info("왼쪽 사이드바에서 종목을 선택하거나 ‘전체 켜기’를 누르세요.")
-        st.stop()
-
-    # timeframe: presets + custom date range
-    preset = st.radio("타임프레임", PRESET_ORDER + [CUSTOM],
-                      index=PRESET_ORDER.index(DEFAULT_PRESET), horizontal=True)
-
-    custom_start = custom_end = None
-    target_pts = 13
-    if preset == CUSTOM:
-        dmin = min(df.index.min() for df in data.values()).date()
-        dmax = max(df.index.max() for df in data.values()).date()
-        default_start = max(dmin, dmax - timedelta(days=90))
-        c1, c2 = st.columns([3, 1])
-        rng = c1.date_input("기간 선택", value=(default_start, dmax),
-                            min_value=dmin, max_value=dmax)
-        target_pts = c2.slider("곡선 점 수", 5, 20, 13)
-        if isinstance(rng, (tuple, list)) and len(rng) == 2:
-            custom_start, custom_end = rng
-        else:  # user mid-selection (single date) -> wait
-            st.info("기간의 시작과 종료 날짜를 모두 선택하세요.")
+    with chart_slot:
+        if not shown:
+            st.info("오른쪽에서 종목을 켜세요 (‘기본’ 버튼으로 기본 종목 표시).")
+            st.stop()
+        if preset == CUSTOM and cstart is None:
+            st.info("기간의 시작·종료 날짜를 모두 선택하세요.")
             st.stop()
 
-    # build tails; collect insufficient names (only among shown tickers)
-    tails: dict[str, pd.DataFrame] = {}
-    insufficient: list[str] = []
-    for ticker in shown:
-        df = data.get(ticker)
-        if df is None or df.empty:
-            insufficient.append(config.label(ticker))
-            continue
-        s = (sample_by_dates(df, custom_start, custom_end, target_pts)
-             if preset == CUSTOM else sample_tail(df, preset))
-        if len(s) < MIN_POINTS:
-            insufficient.append(config.label(ticker))
-            continue
-        tails[ticker] = s
+        tails: dict[str, pd.DataFrame] = {}
+        insufficient: list[str] = []
+        for ticker in shown:
+            df = data.get(ticker)
+            if df is None or df.empty:
+                insufficient.append(config.label(ticker)); continue
+            s = (sample_by_dates(df, cstart, cend, target_pts)
+                 if preset == CUSTOM else sample_tail(df, preset))
+            if len(s) < MIN_POINTS:
+                insufficient.append(config.label(ticker)); continue
+            tails[ticker] = s
 
-    if not tails:
-        st.warning("선택한 기간에 표시할 데이터가 부족합니다.")
-        st.stop()
+        if not tails:
+            st.warning("선택한 기간에 표시할 데이터가 부족합니다."); st.stop()
 
-    label_to_ticker = {config.label(t): t for t in tails}
-    highlight = None if hi_pick == "전체" else label_to_ticker.get(hi_pick)
+        label_to_ticker = {config.label(t): t for t in tails}
+        highlight = None if hi_pick == "전체" else label_to_ticker.get(hi_pick)
 
-    # Locked view: no zoom/pan/drag, no modebar — the scale stays put.
-    st.plotly_chart(
-        build_figure(tails, highlight, mobile=mobile), width="stretch",
-        config={"responsive": True, "displaylogo": False,
-                "displayModeBar": False, "scrollZoom": False,
-                "doubleClick": False, "staticPlot": False},
-    )
+        # Locked view: no zoom/pan/drag, no modebar — the scale stays put.
+        st.plotly_chart(
+            build_figure(tails, highlight, mobile=mobile), width="stretch",
+            config={"responsive": True, "displaylogo": False,
+                    "displayModeBar": False, "scrollZoom": False,
+                    "doubleClick": False, "staticPlot": False},
+        )
 
-    # footer: quadrant guide + freshness + insufficient notice
-    st.divider()
-    quadrant_guide()
-    st.divider()
-    latest = max(t.index.max() for t in tails.values()).strftime("%Y-%m-%d")
-    if preset == CUSTOM:
-        span = f"사용자 지정 {custom_start}~{custom_end} (~{target_pts}점)"
-    else:
-        rng_td, step = PRESETS[preset]
-        span = f"{preset} (최근 {rng_td}거래일, ~{step}일 간격)"
-    st.caption(f"최신 데이터 **{latest}** · {span} · 표시 종목 {len(tails)}개 · "
-               "종목 선택은 왼쪽 사이드바 ☰")
-    if insufficient:
-        st.caption("⚠️ 데이터 부족: " + ", ".join(insufficient))
+        quadrant_guide()
+        latest = max(t.index.max() for t in tails.values()).strftime("%Y-%m-%d")
+        if preset == CUSTOM:
+            span = f"사용자 지정 {cstart}~{cend} (~{target_pts}점)"
+        else:
+            rng_td, step = PRESETS[preset]
+            span = f"{preset} · 최근 {rng_td}거래일"
+        st.caption(f"최신 데이터 **{latest}** · {span} · 표시 {len(tails)}개 · "
+                   "끝의 화살표 = 진행 방향")
+        if insufficient:
+            st.caption("⚠️ 데이터 부족: " + ", ".join(insufficient))
 
 
 if __name__ == "__main__":

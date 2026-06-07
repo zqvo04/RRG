@@ -68,15 +68,16 @@ SUBSECTOR_TICKERS: dict[str, str] = {
 }
 
 # Group name -> {ticker: label}; plus default visibility per group.
+# Two user-facing groups: "기본" (sectors + crypto, on by default) and
+# "세부" (thematic sub-sectors, off by default).
+BASE_TICKERS: dict[str, str] = {**SECTOR_TICKERS, **CRYPTO_TICKERS}
 GROUPS: dict[str, dict[str, str]] = {
-    "기본 섹터": SECTOR_TICKERS,
-    "크립토": CRYPTO_TICKERS,
-    "세부섹터": SUBSECTOR_TICKERS,
+    "기본": BASE_TICKERS,
+    "세부": SUBSECTOR_TICKERS,
 }
 GROUP_DEFAULT_ON: dict[str, bool] = {
-    "기본 섹터": True,
-    "크립토": True,
-    "세부섹터": False,   # hidden until the user toggles it on
+    "기본": True,
+    "세부": False,   # hidden until the user toggles it on
 }
 
 # Flattened ticker -> label (group order preserved) and ticker -> group.
