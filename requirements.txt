@@ -1,7 +1,6 @@
-# Runtime (Streamlit app) — reader only, no yfinance at runtime.
+# Runtime (Streamlit app) — reader only. No yfinance, no DB driver:
+# the app reads Supabase over REST (stdlib urllib) with the read-only anon key.
 streamlit>=1.40,<2
 plotly>=5.24,<6
 pandas>=2.2,<3
 numpy>=1.26,<3
-supabase>=2.9,<3
-python-dotenv>=1.0,<2
