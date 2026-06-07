@@ -35,8 +35,8 @@ DEFAULT_ANON = (
 )
 
 CUSTOM = "사용자 지정"
-# Newcomer-friendly default view: just three flagship names.
-DEFAULT_SHOWN = ["XLK", "IBIT", "MAGS"]   # 기술 · 비트코인 · 빅테크M7
+# Newcomer-friendly default view: a few flagship names.
+DEFAULT_SHOWN = ["XLK", "XLV", "IBIT", "MAGS"]   # 기술 · 헬스케어 · 비트코인 · 빅테크M7
 
 # Per-ticker colours — vivid on the dark canvas; crypto keep brand-ish hues.
 COLORS = {
@@ -119,12 +119,17 @@ def load_rrg() -> dict[str, pd.DataFrame]:
 def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None,
                  mobile: bool = False) -> go.Figure:
     fig = go.Figure()
-    # touch-/screen-aware sizing
-    line_w = 2.2 if mobile else 2.4
-    mid_sz = 7 if mobile else 6
-    end_sz = 15 if mobile else 14
-    lbl_sz = 12 if mobile else 12
-    corner_sz = 11 if mobile else 12
+    # Screen-aware sizing — mobile gets thinner lines & smaller text/markers so
+    # a narrow screen doesn't look heavy/cramped.
+    line_w = 1.5 if mobile else 2.4
+    mid_sz = 4 if mobile else 6
+    end_sz = 9 if mobile else 14
+    lbl_sz = 9 if mobile else 12
+    corner_sz = 9 if mobile else 12
+    axis_sz = 9 if mobile else 12
+    base_sz = 11 if mobile else 13
+    legend_sz = 9 if mobile else 12
+    cross_w = 1.0 if mobile else 1.2
 
     xs = pd.concat([t["rs_ratio"] for t in tails.values()]) if tails else pd.Series([100])
     ys = pd.concat([t["rs_mom"] for t in tails.values()]) if tails else pd.Series([100])
@@ -152,8 +157,8 @@ def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None,
                            font=dict(color=QUAD[name][1], size=corner_sz), opacity=0.65)
 
     # 100 cross — muted gold
-    fig.add_hline(y=100, line=dict(color=GOLD, width=1.2))
-    fig.add_vline(x=100, line=dict(color=GOLD, width=1.2))
+    fig.add_hline(y=100, line=dict(color=GOLD, width=cross_w))
+    fig.add_vline(x=100, line=dict(color=GOLD, width=cross_w))
 
     for ticker, tail in tails.items():
         color = COLORS.get(ticker, "#ccc")
@@ -190,20 +195,22 @@ def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None,
     # Desktop: taller chart, vertical legend on the right.
     if mobile:
         legend = dict(groupclick="togglegroup", orientation="h", yanchor="top",
-                      y=-0.12, xanchor="left", x=0, font=dict(color="#cdd5e3", size=11))
-        layout_extra = dict(height=540, margin=dict(l=8, r=8, t=8, b=8))
+                      y=-0.12, xanchor="left", x=0, font=dict(color="#cdd5e3", size=legend_sz))
+        layout_extra = dict(height=520, margin=dict(l=6, r=6, t=6, b=6))
     else:
         legend = dict(groupclick="togglegroup", orientation="v", yanchor="top",
-                      y=1, xanchor="left", x=1.01, font=dict(color="#cdd5e3"))
+                      y=1, xanchor="left", x=1.01, font=dict(color="#cdd5e3", size=legend_sz))
         layout_extra = dict(height=720, margin=dict(l=40, r=20, t=20, b=40))
 
     fig.update_layout(
         paper_bgcolor=BG, plot_bgcolor=PLOT_BG, dragmode=False,
-        font=dict(color=AXIS_FG, family="Inter, 'Noto Sans KR', sans-serif"),
-        xaxis=dict(title="RS-Ratio", range=[x0, x1], zeroline=False, fixedrange=True,
-                   showgrid=True, gridcolor=GRID, color=AXIS_FG),
-        yaxis=dict(title="RS-Momentum", range=[y0, y1], zeroline=False, fixedrange=True,
-                   showgrid=True, gridcolor=GRID, color=AXIS_FG),
+        font=dict(color=AXIS_FG, family="Inter, 'Noto Sans KR', sans-serif", size=base_sz),
+        xaxis=dict(title=dict(text="RS-Ratio", font=dict(size=axis_sz)),
+                   tickfont=dict(size=axis_sz), range=[x0, x1], zeroline=False,
+                   fixedrange=True, showgrid=True, gridcolor=GRID, color=AXIS_FG),
+        yaxis=dict(title=dict(text="RS-Momentum", font=dict(size=axis_sz)),
+                   tickfont=dict(size=axis_sz), range=[y0, y1], zeroline=False,
+                   fixedrange=True, showgrid=True, gridcolor=GRID, color=AXIS_FG),
         legend=legend, hovermode="closest", **layout_extra,
     )
     return fig
