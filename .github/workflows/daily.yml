@@ -5,10 +5,15 @@
 # EDT / 21:00 UTC EST, so 21:30 leaves a safety buffer year-round). The job is
 # idempotent (ON CONFLICT UPSERT) so re-runs and US-holiday no-ops are harmless.
 #
+# Writes go through Supabase REST (HTTPS) using the service_role key, which
+# works from IPv4 CI runners (direct Postgres is IPv6-only; the pooler rejects
+# custom roles). The app keeps using the read-only anon key.
+#
 # Required GitHub secret:
-#   DATABASE_URL  postgresql://postgres:<pw>@db.<ref>.supabase.co:5432/postgres
-# Optional repo variable:
-#   BACKFILL_YEARS  (first-ever run backfill horizon; default 3)
+#   SUPABASE_SERVICE_KEY  the project's service_role key (Settings -> API)
+# Repo variable (optional; defaults baked in below):
+#   SUPABASE_URL    https://<ref>.supabase.co
+#   BACKFILL_YEARS  first-ever run backfill horizon (default 3)
 # ============================================================================
 name: daily-rrg
 
@@ -31,7 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SUPABASE_URL: ${{ vars.SUPABASE_URL || 'https://mptecsecdhdoxqocubuv.supabase.co' }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
       BACKFILL_YEARS: ${{ vars.BACKFILL_YEARS || '3' }}
     steps:
       - name: Checkout
@@ -47,10 +53,10 @@ jobs:
       - name: Install batch dependencies
         run: pip install -r requirements-batch.txt
 
-      - name: Guard — DATABASE_URL must be set
+      - name: Guard — SUPABASE_SERVICE_KEY must be set
         run: |
-          if [ -z "$DATABASE_URL" ]; then
-            echo "::error::DATABASE_URL secret is not configured."
+          if [ -z "$SUPABASE_SERVICE_KEY" ]; then
+            echo "::error::SUPABASE_SERVICE_KEY secret is not configured."
             exit 1
           fi
 
