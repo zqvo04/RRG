@@ -35,6 +35,8 @@ DEFAULT_ANON = (
 )
 
 CUSTOM = "사용자 지정"
+# Newcomer-friendly default view: just three flagship names.
+DEFAULT_SHOWN = ["XLK", "IBIT", "MAGS"]   # 기술 · 비트코인 · 빅테크M7
 
 # Per-ticker colours — vivid on the dark canvas; crypto keep brand-ish hues.
 COLORS = {
@@ -126,10 +128,13 @@ def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None,
 
     xs = pd.concat([t["rs_ratio"] for t in tails.values()]) if tails else pd.Series([100])
     ys = pd.concat([t["rs_mom"] for t in tails.values()]) if tails else pd.Series([100])
-    pad_x = max(0.5, (xs.max() - xs.min()) * 0.14)
-    pad_y = max(0.5, (ys.max() - ys.min()) * 0.14)
-    x0, x1 = min(xs.min() - pad_x, 99.0), max(xs.max() + pad_x, 101.0)
-    y0, y1 = min(ys.min() - pad_y, 99.0), max(ys.max() + pad_y, 101.0)
+    # Symmetric, 100-centred range -> the cross sits dead-centre and the view is
+    # always balanced regardless of which tickers are shown. A floor keeps it
+    # from zooming in too tightly when everything sits near 100.
+    dev = max(float((xs - 100).abs().max()), float((ys - 100).abs().max()), 1.5)
+    R = dev * 1.18 + 0.4
+    x0, x1 = 100 - R, 100 + R
+    y0, y1 = 100 - R, 100 + R
 
     rects = {
         "Leading":   (100, x1, 100, y1),
@@ -193,11 +198,11 @@ def build_figure(tails: dict[str, pd.DataFrame], highlight: str | None,
         layout_extra = dict(height=720, margin=dict(l=40, r=20, t=20, b=40))
 
     fig.update_layout(
-        paper_bgcolor=BG, plot_bgcolor=PLOT_BG,
+        paper_bgcolor=BG, plot_bgcolor=PLOT_BG, dragmode=False,
         font=dict(color=AXIS_FG, family="Inter, 'Noto Sans KR', sans-serif"),
-        xaxis=dict(title="RS-Ratio", range=[x0, x1], zeroline=False,
+        xaxis=dict(title="RS-Ratio", range=[x0, x1], zeroline=False, fixedrange=True,
                    showgrid=True, gridcolor=GRID, color=AXIS_FG),
-        yaxis=dict(title="RS-Momentum", range=[y0, y1], zeroline=False,
+        yaxis=dict(title="RS-Momentum", range=[y0, y1], zeroline=False, fixedrange=True,
                    showgrid=True, gridcolor=GRID, color=AXIS_FG),
         legend=legend, hovermode="closest", **layout_extra,
     )
@@ -267,42 +272,37 @@ def main() -> None:
         st.error("데이터를 불러오지 못했습니다. Supabase 연결/시크릿을 확인하세요.")
         st.stop()
 
-    # group pool (기본 섹터 / 크립토 on by default; 세부섹터 off) + mobile mode
-    gcols = st.columns(len(config.GROUPS) + 1)
-    for i, name in enumerate(config.GROUPS):
-        gcols[i].checkbox(name, value=config.GROUP_DEFAULT_ON[name], key=f"grp::{name}")
-    mobile = gcols[-1].toggle("📱 모바일", value=detect_mobile_default(),
-                              help="범례를 하단으로 옮기고 차트를 화면 폭에 맞춥니다")
-
-    def pool() -> list[str]:
-        """Tickers whose group is currently checked (reads live widget state)."""
-        return [t for t in config.UNIVERSE
-                if st.session_state.get(f"grp::{config.GROUP_OF[t]}",
-                                        config.GROUP_DEFAULT_ON[config.GROUP_OF[t]])]
-
-    candidates = pool()
-    if not candidates:
-        st.warning("표시할 그룹을 하나 이상 선택하세요.")
-        st.stop()
-
-    # per-ticker show/hide with master on/off (works on desktop & mobile)
+    # ── all controls live in the sidebar (clean first screen) ───────────────
+    all_tk = list(config.UNIVERSE)
     SHOWN = "shown_tickers"
     if SHOWN not in st.session_state:
-        st.session_state[SHOWN] = list(candidates)          # default: all in pool
-    st.session_state[SHOWN] = [t for t in st.session_state[SHOWN] if t in candidates]
+        st.session_state[SHOWN] = [t for t in DEFAULT_SHOWN if t in all_tk]
 
-    def _show_all() -> None:
-        st.session_state[SHOWN] = pool()
+    def _add_group(tickers: list[str]) -> None:
+        cur = set(st.session_state.get(SHOWN, [])) | set(tickers)
+        st.session_state[SHOWN] = [t for t in config.UNIVERSE if t in cur]
 
-    def _show_none() -> None:
-        st.session_state[SHOWN] = []
+    with st.sidebar:
+        st.markdown("#### 종목 선택")
+        mc = st.columns(2)
+        mc[0].button("전체 켜기", use_container_width=True,
+                     on_click=lambda: st.session_state.__setitem__(SHOWN, all_tk))
+        mc[1].button("전체 끄기", use_container_width=True,
+                     on_click=lambda: st.session_state.__setitem__(SHOWN, []))
+        with st.expander("그룹으로 추가"):
+            for gname, gtk in config.GROUPS.items():
+                st.button(f"＋ {gname}", key=f"add::{gname}", use_container_width=True,
+                          on_click=_add_group, args=(list(gtk),))
+        shown = st.multiselect("표시 종목", all_tk, key=SHOWN, format_func=config.label)
+        st.divider()
+        hi_pick = st.selectbox("강조 (나머지 흐리게)",
+                               ["전체"] + [config.label(t) for t in shown])
+        st.divider()
+        mobile = st.toggle("📱 모바일 모드", value=detect_mobile_default(),
+                           help="범례를 차트 하단으로 옮기고 화면 폭에 맞춥니다")
 
-    bc = st.columns([1, 1, 4])
-    bc[0].button("전체 켜기", on_click=_show_all)
-    bc[1].button("전체 끄기", on_click=_show_none)
-    shown = st.multiselect("표시 종목", candidates, key=SHOWN, format_func=config.label)
     if not shown:
-        st.info("표시할 종목이 없습니다 — ‘전체 켜기’를 누르거나 종목을 선택하세요.")
+        st.info("왼쪽 사이드바에서 종목을 선택하거나 ‘전체 켜기’를 누르세요.")
         st.stop()
 
     # timeframe: presets + custom date range
@@ -340,19 +340,19 @@ def main() -> None:
             continue
         tails[ticker] = s
 
-    options = ["전체"] + [config.label(t) for t in tails]
-    pick = st.selectbox("강조할 종목 (나머지는 흐리게)", options, index=0)
-    label_to_ticker = {config.label(t): t for t in tails}
-    highlight = None if pick == "전체" else label_to_ticker.get(pick)
-
     if not tails:
         st.warning("선택한 기간에 표시할 데이터가 부족합니다.")
         st.stop()
 
+    label_to_ticker = {config.label(t): t for t in tails}
+    highlight = None if hi_pick == "전체" else label_to_ticker.get(hi_pick)
+
+    # Locked view: no zoom/pan/drag, no modebar — the scale stays put.
     st.plotly_chart(
         build_figure(tails, highlight, mobile=mobile), width="stretch",
         config={"responsive": True, "displaylogo": False,
-                "displayModeBar": not mobile, "scrollZoom": False},
+                "displayModeBar": False, "scrollZoom": False,
+                "doubleClick": False, "staticPlot": False},
     )
 
     # footer: quadrant guide + freshness + insufficient notice
@@ -366,7 +366,7 @@ def main() -> None:
         rng_td, step = PRESETS[preset]
         span = f"{preset} (최근 {rng_td}거래일, ~{step}일 간격)"
     st.caption(f"최신 데이터 **{latest}** · {span} · 표시 종목 {len(tails)}개 · "
-               "‘표시 종목’ 또는 전체 켜기/끄기로 토글")
+               "종목 선택은 왼쪽 사이드바 ☰")
     if insufficient:
         st.caption("⚠️ 데이터 부족: " + ", ".join(insufficient))
 
