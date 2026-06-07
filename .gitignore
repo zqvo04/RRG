@@ -6,4 +6,3 @@ __pycache__/
 venv/
 *.egg-info/
 .streamlit/secrets.toml
-*.zip
