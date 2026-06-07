@@ -1,0 +1,7 @@
+# Batch jobs (GitHub Actions) — data ingestion + RRG compute.
+# Kept separate from the app runtime so the Streamlit deploy never pulls
+# yfinance (spec: no data-provider calls at app runtime).
+-r requirements.txt
+yfinance>=0.2.50,<0.3
+pandas-datareader>=0.10,<0.11   # stooq fallback
+psycopg2-binary>=2.9,<3         # Postgres UPSERT into Supabase
