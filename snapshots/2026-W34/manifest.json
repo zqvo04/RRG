@@ -1,0 +1,12 @@
+{
+  "snapshot_id": "2026-W34",
+  "as_of_week": "2026-08-20",
+  "formula_version": "rrg_proxy_v1",
+  "payload_sha256": "83fa5f741d8dd2460838a287ae0765e9b118184495067a213dc3de46c2ab1cc0",
+  "quality": {
+    "symbols_expected": 12,
+    "symbols_received": 12,
+    "dates_aligned": true,
+    "publishable": true
+  }
+}

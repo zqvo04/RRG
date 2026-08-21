@@ -1,0 +1,856 @@
+{
+  "snapshot_id": "2026-W34",
+  "status": "verified",
+  "as_of_week": "2026-08-20",
+  "generated_at": "2026-08-21T07:12:40.906085+00:00",
+  "universe_id": "us_sector_spdr_v1",
+  "benchmark": "SPY",
+  "frequency": "weekly",
+  "price_basis": "weekly_adjusted_close",
+  "formula_version": "rrg_proxy_v1",
+  "tail_weeks": 12,
+  "sectors": [
+    {
+      "ticker": "XLB",
+      "name": "Materials",
+      "ratio": 99.7364,
+      "momentum": 100.0588,
+      "quadrant": "improving",
+      "heading_degrees": 343.25,
+      "velocity": 1.6542,
+      "trail": [
+        {
+          "week": "2026-05-29",
+          "ratio": 95.2124,
+          "momentum": 98.1871
+        },
+        {
+          "week": "2026-06-05",
+          "ratio": 97.1264,
+          "momentum": 101.3403
+        },
+        {
+          "week": "2026-06-12",
+          "ratio": 99.5995,
+          "momentum": 105.7798
+        },
+        {
+          "week": "2026-06-18",
+          "ratio": 98.2659,
+          "momentum": 104.2933
+        },
+        {
+          "week": "2026-06-26",
+          "ratio": 100.5359,
+          "momentum": 105.5911
+        },
+        {
+          "week": "2026-07-02",
+          "ratio": 99.3018,
+          "momentum": 102.2397
+        },
+        {
+          "week": "2026-07-10",
+          "ratio": 96.4255,
+          "momentum": 96.8133
+        },
+        {
+          "week": "2026-07-17",
+          "ratio": 97.6295,
+          "momentum": 99.3524
+        },
+        {
+          "week": "2026-07-24",
+          "ratio": 99.6778,
+          "momentum": 99.1465
+        },
+        {
+          "week": "2026-07-31",
+          "ratio": 97.418,
+          "momentum": 98.103
+        },
+        {
+          "week": "2026-08-07",
+          "ratio": 98.8392,
+          "momentum": 102.5032
+        },
+        {
+          "week": "2026-08-14",
+          "ratio": 98.1524,
+          "momentum": 100.5356
+        },
+        {
+          "week": "2026-08-20",
+          "ratio": 99.7364,
+          "momentum": 100.0588
+        }
+      ]
+    },
+    {
+      "ticker": "XLC",
+      "name": "Communication Services",
+      "ratio": 97.7443,
+      "momentum": 102.9685,
+      "quadrant": "improving",
+      "heading_degrees": 87.35,
+      "velocity": 2.757,
+      "trail": [
+        {
+          "week": "2026-05-29",
+          "ratio": 94.3217,
+          "momentum": 97.7321
+        },
+        {
+          "week": "2026-06-05",
+          "ratio": 94.2724,
+          "momentum": 99.0045
+        },
+        {
+          "week": "2026-06-12",
+          "ratio": 94.5699,
+          "momentum": 99.4497
+        },
+        {
+          "week": "2026-06-18",
+          "ratio": 92.9345,
+          "momentum": 98.2318
+        },
+        {
+          "week": "2026-06-26",
+          "ratio": 93.588,
+          "momentum": 99.2221
+        },
+        {
+          "week": "2026-07-02",
+          "ratio": 95.2957,
+          "momentum": 101.0855
+        },
+        {
+          "week": "2026-07-10",
+          "ratio": 96.3451,
+          "momentum": 101.8771
+        },
+        {
+          "week": "2026-07-17",
+          "ratio": 97.4078,
+          "momentum": 104.8134
+        },
+        {
+          "week": "2026-07-24",
+          "ratio": 94.9265,
+          "momentum": 101.4302
+        },
+        {
+          "week": "2026-07-31",
+          "ratio": 96.2141,
+          "momentum": 100.9638
+        },
+        {
+          "week": "2026-08-07",
+          "ratio": 96.1485,
+          "momentum": 99.7959
+        },
+        {
+          "week": "2026-08-14",
+          "ratio": 97.6167,
+          "momentum": 100.2145
+        },
+        {
+          "week": "2026-08-20",
+          "ratio": 97.7443,
+          "momentum": 102.9685
+        }
+      ]
+    },
+    {
+      "ticker": "XLY",
+      "name": "Consumer Discretionary",
+      "ratio": 98.2304,
+      "momentum": 104.4829,
+      "quadrant": "improving",
+      "heading_degrees": 80.65,
+      "velocity": 4.7303,
+      "trail": [
+        {
+          "week": "2026-05-29",
+          "ratio": 97.1348,
+          "momentum": 99.3578
+        },
+        {
+          "week": "2026-06-05",
+          "ratio": 95.4,
+          "momentum": 98.1228
+        },
+        {
+          "week": "2026-06-12",
+          "ratio": 96.809,
+          "momentum": 102.0502
+        },
+        {
+          "week": "2026-06-18",
+          "ratio": 96.8795,
+          "momentum": 100.178
+        },
+        {
+          "week": "2026-06-26",
+          "ratio": 97.4795,
+          "momentum": 100.3548
+        },
+        {
+          "week": "2026-07-02",
+          "ratio": 98.0281,
+          "momentum": 102.7549
+        },
+        {
+          "week": "2026-07-10",
+          "ratio": 97.2503,
+          "momentum": 100.4559
+        },
+        {
+          "week": "2026-07-17",
+          "ratio": 97.6416,
+          "momentum": 100.7867
+        },
+        {
+          "week": "2026-07-24",
+          "ratio": 94.0158,
+          "momentum": 96.4468
+        },
+        {
+          "week": "2026-07-31",
+          "ratio": 98.8615,
+          "momentum": 100.8501
+        },
+        {
+          "week": "2026-08-07",
+          "ratio": 98.8058,
+          "momentum": 101.5995
+        },
+        {
+          "week": "2026-08-14",
+          "ratio": 97.4615,
+          "momentum": 99.8155
+        },
+        {
+          "week": "2026-08-20",
+          "ratio": 98.2304,
+          "momentum": 104.4829
+        }
+      ]
+    },
+    {
+      "ticker": "XLP",
+      "name": "Consumer Staples",
+      "ratio": 98.8276,
+      "momentum": 99.4625,
+      "quadrant": "lagging",
+      "heading_degrees": 56.67,
+      "velocity": 1.9363,
+      "trail": [
+        {
+          "week": "2026-05-29",
+          "ratio": 93.3735,
+          "momentum": 97.025
+        },
+        {
+          "week": "2026-06-05",
+          "ratio": 96.883,
+          "momentum": 102.152
+        },
+        {
+          "week": "2026-06-12",
+          "ratio": 99.2122,
+          "momentum": 103.5372
+        },
+        {
+          "week": "2026-06-18",
+          "ratio": 96.0417,
+          "momentum": 100.2188
+        },
+        {
+          "week": "2026-06-26",
+          "ratio": 100.6375,
+          "momentum": 107.7795
+        },
+        {
+          "week": "2026-07-02",
+          "ratio": 98.995,
+          "momentum": 102.1799
+        },
+        {
+          "week": "2026-07-10",
+          "ratio": 97.1249,
+          "momentum": 97.8961
+        },
+        {
+          "week": "2026-07-17",
+          "ratio": 99.9171,
+          "momentum": 104.0351
+        },
+        {
+          "week": "2026-07-24",
+          "ratio": 99.3617,
+          "momentum": 98.7323
+        },
+        {
+          "week": "2026-07-31",
+          "ratio": 99.4501,
+          "momentum": 100.4598
+        },
+        {
+          "week": "2026-08-07",
+          "ratio": 96.6867,
+          "momentum": 99.5488
+        },
+        {
+          "week": "2026-08-14",
+          "ratio": 97.7636,
+          "momentum": 97.8447
+        },
+        {
+          "week": "2026-08-20",
+          "ratio": 98.8276,
+          "momentum": 99.4625
+        }
+      ]
+    },
+    {
+      "ticker": "XLE",
+      "name": "Energy",
+      "ratio": 106.9709,
+      "momentum": 101.8462,
+      "quadrant": "leading",
+      "heading_degrees": 7.63,
+      "velocity": 3.7598,
+      "trail": [
+        {
+          "week": "2026-05-29",
+          "ratio": 93.3117,
+          "momentum": 93.3789
+        },
+        {
+          "week": "2026-06-05",
+          "ratio": 98.3264,
+          "momentum": 105.2551
+        },
+        {
+          "week": "2026-06-12",
+          "ratio": 97.9067,
+          "momentum": 98.3449
+        },
+        {
+          "week": "2026-06-18",
+          "ratio": 91.8628,
+          "momentum": 92.8404
+        },
+        {
+          "week": "2026-06-26",
+          "ratio": 95.5903,
+          "momentum": 102.4419
+        },
+        {
+          "week": "2026-07-02",
+          "ratio": 93.4898,
+          "momentum": 95.081
+        },
+        {
+          "week": "2026-07-10",
+          "ratio": 96.0777,
+          "momentum": 98.1319
+        },
+        {
+          "week": "2026-07-17",
+          "ratio": 101.8724,
+          "momentum": 110.8962
+        },
+        {
+          "week": "2026-07-24",
+          "ratio": 105.0318,
+          "momentum": 109.877
+        },
+        {
+          "week": "2026-07-31",
+          "ratio": 103.2149,
+          "momentum": 110.4024
+        },
+        {
+          "week": "2026-08-07",
+          "ratio": 96.7954,
+          "momentum": 100.7469
+        },
+        {
+          "week": "2026-08-14",
+          "ratio": 103.2444,
+          "momentum": 101.3467
+        },
+        {
+          "week": "2026-08-20",
+          "ratio": 106.9709,
+          "momentum": 101.8462
+        }
+      ]
+    },
+    {
+      "ticker": "XLF",
+      "name": "Financials",
+      "ratio": 100.6518,
+      "momentum": 97.0907,
+      "quadrant": "weakening",
+      "heading_degrees": 227.98,
+      "velocity": 0.6411,
+      "trail": [
+        {
+          "week": "2026-05-29",
+          "ratio": 94.5628,
+          "momentum": 98.066
+        },
+        {
+          "week": "2026-06-05",
+          "ratio": 98.5769,
+          "momentum": 104.9607
+        },
+        {
+          "week": "2026-06-12",
+          "ratio": 99.9725,
+          "momentum": 105.964
+        },
+        {
+          "week": "2026-06-18",
+          "ratio": 99.5531,
+          "momentum": 103.9833
+        },
+        {
+          "week": "2026-06-26",
+          "ratio": 101.9926,
+          "momentum": 107.8571
+        },
+        {
+          "week": "2026-07-02",
+          "ratio": 103.1128,
+          "momentum": 104.6013
+        },
+        {
+          "week": "2026-07-10",
+          "ratio": 101.6142,
+          "momentum": 101.6422
+        },
+        {
+          "week": "2026-07-17",
+          "ratio": 103.6016,
+          "momentum": 104.0666
+        },
+        {
+          "week": "2026-07-24",
+          "ratio": 103.6678,
+          "momentum": 101.6425
+        },
+        {
+          "week": "2026-07-31",
+          "ratio": 103.1472,
+          "momentum": 100.0333
+        },
+        {
+          "week": "2026-08-07",
+          "ratio": 100.6878,
+          "momentum": 99.0882
+        },
+        {
+          "week": "2026-08-14",
+          "ratio": 101.0809,
+          "momentum": 97.567
+        },
+        {
+          "week": "2026-08-20",
+          "ratio": 100.6518,
+          "momentum": 97.0907
+        }
+      ]
+    },
+    {
+      "ticker": "XLV",
+      "name": "Health Care",
+      "ratio": 104.9146,
+      "momentum": 101.342,
+      "quadrant": "leading",
+      "heading_degrees": 36.65,
+      "velocity": 5.0253,
+      "trail": [
+        {
+          "week": "2026-05-29",
+          "ratio": 94.9798,
+          "momentum": 102.2813
+        },
+        {
+          "week": "2026-06-05",
+          "ratio": 99.764,
+          "momentum": 109.603
+        },
+        {
+          "week": "2026-06-12",
+          "ratio": 99.7579,
+          "momentum": 107.3438
+        },
+        {
+          "week": "2026-06-18",
+          "ratio": 96.5565,
+          "momentum": 100.7586
+        },
+        {
+          "week": "2026-06-26",
+          "ratio": 105.6164,
+          "momentum": 111.1988
+        },
+        {
+          "week": "2026-07-02",
+          "ratio": 104.736,
+          "momentum": 104.9838
+        },
+        {
+          "week": "2026-07-10",
+          "ratio": 101.2788,
+          "momentum": 101.5245
+        },
+        {
+          "week": "2026-07-17",
+          "ratio": 102.5838,
+          "momentum": 106.2423
+        },
+        {
+          "week": "2026-07-24",
+          "ratio": 103.5253,
+          "momentum": 98.0201
+        },
+        {
+          "week": "2026-07-31",
+          "ratio": 102.0417,
+          "momentum": 97.4275
+        },
+        {
+          "week": "2026-08-07",
+          "ratio": 100.4099,
+          "momentum": 99.1421
+        },
+        {
+          "week": "2026-08-14",
+          "ratio": 100.883,
+          "momentum": 98.3421
+        },
+        {
+          "week": "2026-08-20",
+          "ratio": 104.9146,
+          "momentum": 101.342
+        }
+      ]
+    },
+    {
+      "ticker": "XLI",
+      "name": "Industrials",
+      "ratio": 97.9995,
+      "momentum": 95.9644,
+      "quadrant": "lagging",
+      "heading_degrees": 246.27,
+      "velocity": 3.8336,
+      "trail": [
+        {
+          "week": "2026-05-29",
+          "ratio": 95.7888,
+          "momentum": 98.0151
+        },
+        {
+          "week": "2026-06-05",
+          "ratio": 99.0069,
+          "momentum": 102.9009
+        },
+        {
+          "week": "2026-06-12",
+          "ratio": 99.6369,
+          "momentum": 104.1165
+        },
+        {
+          "week": "2026-06-18",
+          "ratio": 101.1718,
+          "momentum": 105.6669
+        },
+        {
+          "week": "2026-06-26",
+          "ratio": 103.4556,
+          "momentum": 108.0038
+        },
+        {
+          "week": "2026-07-02",
+          "ratio": 102.3707,
+          "momentum": 103.3975
+        },
+        {
+          "week": "2026-07-10",
+          "ratio": 99.9133,
+          "momentum": 100.2774
+        },
+        {
+          "week": "2026-07-17",
+          "ratio": 100.069,
+          "momentum": 98.9099
+        },
+        {
+          "week": "2026-07-24",
+          "ratio": 102.1206,
+          "momentum": 98.7096
+        },
+        {
+          "week": "2026-07-31",
+          "ratio": 99.5315,
+          "momentum": 97.2266
+        },
+        {
+          "week": "2026-08-07",
+          "ratio": 99.1506,
+          "momentum": 99.2366
+        },
+        {
+          "week": "2026-08-14",
+          "ratio": 99.5424,
+          "momentum": 99.4738
+        },
+        {
+          "week": "2026-08-20",
+          "ratio": 97.9995,
+          "momentum": 95.9644
+        }
+      ]
+    },
+    {
+      "ticker": "XLK",
+      "name": "Information Technology",
+      "ratio": 100.0933,
+      "momentum": 100.4819,
+      "quadrant": "leading",
+      "heading_degrees": 235.11,
+      "velocity": 3.4179,
+      "trail": [
+        {
+          "week": "2026-05-29",
+          "ratio": 111.1675,
+          "momentum": 105.4566
+        },
+        {
+          "week": "2026-06-05",
+          "ratio": 106.4627,
+          "momentum": 96.9226
+        },
+        {
+          "week": "2026-06-12",
+          "ratio": 107.2,
+          "momentum": 98.7899
+        },
+        {
+          "week": "2026-06-18",
+          "ratio": 108.475,
+          "momentum": 99.9518
+        },
+        {
+          "week": "2026-06-26",
+          "ratio": 104.4624,
+          "momentum": 93.9685
+        },
+        {
+          "week": "2026-07-02",
+          "ratio": 101.6703,
+          "momentum": 95.4985
+        },
+        {
+          "week": "2026-07-10",
+          "ratio": 102.7161,
+          "momentum": 95.8173
+        },
+        {
+          "week": "2026-07-17",
+          "ratio": 98.802,
+          "momentum": 91.0827
+        },
+        {
+          "week": "2026-07-24",
+          "ratio": 99.6133,
+          "momentum": 95.358
+        },
+        {
+          "week": "2026-07-31",
+          "ratio": 98.4844,
+          "momentum": 96.8664
+        },
+        {
+          "week": "2026-08-07",
+          "ratio": 101.7019,
+          "momentum": 99.0126
+        },
+        {
+          "week": "2026-08-14",
+          "ratio": 102.0482,
+          "momentum": 103.2856
+        },
+        {
+          "week": "2026-08-20",
+          "ratio": 100.0933,
+          "momentum": 100.4819
+        }
+      ]
+    },
+    {
+      "ticker": "XLRE",
+      "name": "Real Estate",
+      "ratio": 98.8653,
+      "momentum": 96.2393,
+      "quadrant": "lagging",
+      "heading_degrees": 9.36,
+      "velocity": 1.5452,
+      "trail": [
+        {
+          "week": "2026-05-29",
+          "ratio": 95.7501,
+          "momentum": 96.7775
+        },
+        {
+          "week": "2026-06-05",
+          "ratio": 99.8223,
+          "momentum": 102.5973
+        },
+        {
+          "week": "2026-06-12",
+          "ratio": 100.6187,
+          "momentum": 105.6272
+        },
+        {
+          "week": "2026-06-18",
+          "ratio": 96.8945,
+          "momentum": 99.1666
+        },
+        {
+          "week": "2026-06-26",
+          "ratio": 102.7839,
+          "momentum": 107.346
+        },
+        {
+          "week": "2026-07-02",
+          "ratio": 99.4505,
+          "momentum": 99.6275
+        },
+        {
+          "week": "2026-07-10",
+          "ratio": 97.9407,
+          "momentum": 97.3385
+        },
+        {
+          "week": "2026-07-17",
+          "ratio": 101.4092,
+          "momentum": 104.6594
+        },
+        {
+          "week": "2026-07-24",
+          "ratio": 102.7286,
+          "momentum": 99.9462
+        },
+        {
+          "week": "2026-07-31",
+          "ratio": 99.7158,
+          "momentum": 100.2668
+        },
+        {
+          "week": "2026-08-07",
+          "ratio": 96.6739,
+          "momentum": 98.7066
+        },
+        {
+          "week": "2026-08-14",
+          "ratio": 97.3407,
+          "momentum": 95.9881
+        },
+        {
+          "week": "2026-08-20",
+          "ratio": 98.8653,
+          "momentum": 96.2393
+        }
+      ]
+    },
+    {
+      "ticker": "XLU",
+      "name": "Utilities",
+      "ratio": 95.9687,
+      "momentum": 94.6753,
+      "quadrant": "lagging",
+      "heading_degrees": 307.86,
+      "velocity": 1.9103,
+      "trail": [
+        {
+          "week": "2026-05-29",
+          "ratio": 92.3837,
+          "momentum": 95.4959
+        },
+        {
+          "week": "2026-06-05",
+          "ratio": 95.3402,
+          "momentum": 103.6204
+        },
+        {
+          "week": "2026-06-12",
+          "ratio": 95.8444,
+          "momentum": 104.9005
+        },
+        {
+          "week": "2026-06-18",
+          "ratio": 96.0764,
+          "momentum": 101.6794
+        },
+        {
+          "week": "2026-06-26",
+          "ratio": 101.9037,
+          "momentum": 110.3049
+        },
+        {
+          "week": "2026-07-02",
+          "ratio": 98.9639,
+          "momentum": 103.8009
+        },
+        {
+          "week": "2026-07-10",
+          "ratio": 97.3172,
+          "momentum": 101.5367
+        },
+        {
+          "week": "2026-07-17",
+          "ratio": 98.5578,
+          "momentum": 102.5827
+        },
+        {
+          "week": "2026-07-24",
+          "ratio": 101.3662,
+          "momentum": 99.4725
+        },
+        {
+          "week": "2026-07-31",
+          "ratio": 96.608,
+          "momentum": 97.6194
+        },
+        {
+          "week": "2026-08-07",
+          "ratio": 92.865,
+          "momentum": 95.425
+        },
+        {
+          "week": "2026-08-14",
+          "ratio": 94.7963,
+          "momentum": 96.1835
+        },
+        {
+          "week": "2026-08-20",
+          "ratio": 95.9687,
+          "momentum": 94.6753
+        }
+      ]
+    }
+  ],
+  "quality": {
+    "symbols_expected": 12,
+    "symbols_received": 12,
+    "dates_aligned": true,
+    "publishable": true
+  }
+}
