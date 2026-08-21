@@ -5,9 +5,9 @@ __pycache__/
 node_modules/
 web/node_modules/
 web/dist/
+*.tsbuildinfo
 web/public/data/snapshots/
 web/public/data/latest.json
 !web/public/data/.gitkeep
 .env
 data-worktree/
-
