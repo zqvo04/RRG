@@ -14,7 +14,7 @@ def snapshot_id(as_of_week: str) -> str:
 
 
 def build_snapshot(states: list[SectorState], as_of_week: str, universe_id: str, benchmark: str, settings: EngineSettings) -> dict:
-    return {"snapshot_id": snapshot_id(as_of_week), "status": "verified", "as_of_week": as_of_week, "generated_at": datetime.now(timezone.utc).isoformat(), "universe_id": universe_id, "benchmark": benchmark, "frequency": "weekly", "price_basis": "weekly_adjusted_close", "formula_version": settings.formula_version, "tail_weeks": settings.default_tail_weeks, "sectors": [state.to_dict() for state in states], "quality": {"symbols_expected": len(states) + 1, "symbols_received": len(states) + 1, "dates_aligned": True, "publishable": True}}
+    return {"snapshot_id": snapshot_id(as_of_week), "status": "verified", "as_of_week": as_of_week, "generated_at": datetime.now(timezone.utc).isoformat(), "universe_id": universe_id, "benchmark": benchmark, "frequency": "weekly", "weekly_anchor": "friday_regular_close", "anchor_timezone": "America/New_York", "price_basis": "weekly_adjusted_close", "formula_version": settings.formula_version, "tail_weeks": settings.default_tail_weeks, "sectors": [state.to_dict() for state in states], "quality": {"symbols_expected": len(states) + 1, "symbols_received": len(states) + 1, "dates_aligned": True, "publishable": True}}
 
 
 def write_snapshot(snapshot: dict, output_root: Path) -> Path:
@@ -28,4 +28,3 @@ def write_snapshot(snapshot: dict, output_root: Path) -> Path:
     manifest = {"snapshot_id": snapshot["snapshot_id"], "as_of_week": snapshot["as_of_week"], "formula_version": snapshot["formula_version"], "payload_sha256": hashlib.sha256(payload.encode()).hexdigest(), "quality": snapshot["quality"]}
     (destination / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return destination
-

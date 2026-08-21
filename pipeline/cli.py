@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import argparse, os
+from datetime import datetime
 from pathlib import Path
 
+from pipeline.calendar import completed_friday_bars
 from pipeline.config import load_engine_settings, load_universe
 from pipeline.engine import build_sector_state
 from pipeline.errors import DataValidationError
@@ -11,11 +13,20 @@ from pipeline.publisher import atomic_publish
 from pipeline.snapshot import build_snapshot, write_snapshot
 
 
-def run(output: Path, settings_path: Path, universe_path: Path, data_root: Path | None) -> None:
+def run(output: Path, settings_path: Path, universe_path: Path, data_root: Path | None, reference_time: datetime | None = None) -> None:
     settings, universe = load_engine_settings(settings_path), load_universe(universe_path)
     provider = AlphaVantageProvider(os.environ.get("ALPHAVANTAGE_API_KEY", ""))
-    benchmark = provider.fetch_weekly_adjusted(universe["benchmark"])
-    states = [build_sector_state(item["ticker"], item["name"], provider.fetch_weekly_adjusted(item["ticker"]), benchmark, settings) for item in universe["symbols"]]
+    benchmark = completed_friday_bars(provider.fetch_weekly_adjusted(universe["benchmark"]), reference_time)
+    states = [
+        build_sector_state(
+            item["ticker"],
+            item["name"],
+            completed_friday_bars(provider.fetch_weekly_adjusted(item["ticker"]), reference_time),
+            benchmark,
+            settings,
+        )
+        for item in universe["symbols"]
+    ]
     as_of_weeks = {state.trail[-1].week for state in states}
     if len(as_of_weeks) != 1:
         raise DataValidationError(f"Symbols are not aligned to one completed week: {sorted(as_of_weeks)}")
