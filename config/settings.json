@@ -1,0 +1,11 @@
+{
+  "engine": {
+    "calculation_weeks": 104,
+    "min_history_weeks": 52,
+    "ratio_ema_weeks": 13,
+    "momentum_lag_weeks": 4,
+    "default_tail_weeks": 12,
+    "formula_version": "rrg_proxy_v1"
+  }
+}
+

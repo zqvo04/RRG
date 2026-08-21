@@ -1,0 +1,13 @@
+{
+  "universe_id": "us_sector_spdr_v1",
+  "benchmark": "SPY",
+  "symbols": [
+    {"ticker": "XLB", "name": "Materials"}, {"ticker": "XLC", "name": "Communication Services"},
+    {"ticker": "XLY", "name": "Consumer Discretionary"}, {"ticker": "XLP", "name": "Consumer Staples"},
+    {"ticker": "XLE", "name": "Energy"}, {"ticker": "XLF", "name": "Financials"},
+    {"ticker": "XLV", "name": "Health Care"}, {"ticker": "XLI", "name": "Industrials"},
+    {"ticker": "XLK", "name": "Information Technology"}, {"ticker": "XLRE", "name": "Real Estate"},
+    {"ticker": "XLU", "name": "Utilities"}
+  ]
+}
+
