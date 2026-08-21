@@ -35,16 +35,14 @@ jobs:
       - run: python -m pip install -e ".[dev]"
       - name: Prepare data branch worktree
         run: |
-          git config user.name "rrg-atlas-bot"
-          git config user.email "rrg-atlas-bot@users.noreply.github.com"
           if git ls-remote --exit-code --heads origin data; then
             git clone --branch data --single-branch "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" data-worktree
           else
-            mkdir data-worktree && cd data-worktree
-            git init
-            git checkout --orphan data
-            git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+            git init --initial-branch=data data-worktree
+            git -C data-worktree remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           fi
+          git -C data-worktree config user.name "rrg-atlas-bot"
+          git -C data-worktree config user.email "rrg-atlas-bot@users.noreply.github.com"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Calculate and validate verified snapshot
@@ -55,7 +53,8 @@ jobs:
         run: |
           cd data-worktree
           git add .
-          git commit -m "data: publish weekly RRG snapshot" || exit 0
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "data: publish weekly RRG snapshot"
           git push origin data
       - name: Prepare static snapshot files
         run: |
@@ -66,9 +65,12 @@ jobs:
       - name: Build web
         working-directory: web
         run: npm ci && npm run build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - id: pages
+        continue-on-error: true
+        uses: actions/configure-pages@v5
+      - if: steps.pages.outcome == 'success'
+        uses: actions/upload-pages-artifact@v3
         with: { path: web/dist }
-      - id: deployment
+      - if: steps.pages.outcome == 'success'
+        id: deployment
         uses: actions/deploy-pages@v4
-
