@@ -116,7 +116,7 @@ export default function App() {
   const selected = snapshot.sectors.find((sector) => sector.ticker === active) ?? visible[0];
   const signals = (snapshot.events ?? []).slice(0, 3);
   const usesSmoothedTrail = tail >= 12;
-  const smoothingLabel = tail >= 16 ? " · 5주 평균 / 2주 압축" : " · 중간 경로 3주 평균";
+  const smoothingLabel = tail >= 16 ? " · 2주 간격 실제 관측점" : " · 3주 평균 직선 경로";
   const selectSector = (ticker: string) => { setFilter("all"); setActive(ticker); };
 
   return <main className="atlas-shell">
