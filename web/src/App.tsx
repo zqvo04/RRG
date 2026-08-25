@@ -40,14 +40,33 @@ function direction(heading: number | null) {
   return "강세 유지";
 }
 
-function SectorDetail({ sector }: { sector: SectorState }) {
+function quadrantFor(ratio: number, momentum: number): Quadrant {
+  if (ratio >= 100 && momentum >= 100) return "leading";
+  if (ratio >= 100) return "weakening";
+  if (momentum >= 100) return "improving";
+  return "lagging";
+}
+
+function arrowForHeading(heading: number | null) {
+  if (heading === null) return "•";
+  const arrows = ["→", "↗", "↑", "↖", "←", "↙", "↓", "↘"];
+  return arrows[Math.round(heading / 45) % 8];
+}
+
+function SectorDetail({ sector, tail }: { sector: SectorState; tail: number }) {
   const previous = sector.trail.at(-2);
+  const start = sector.trail.at(-(tail + 1)) ?? sector.trail[0]!;
   const ratioChange = previous ? sector.ratio - previous.ratio : 0;
   const momentumChange = previous ? sector.momentum - previous.momentum : 0;
+  const ratioWindow = sector.ratio - start.ratio;
+  const momentumWindow = sector.momentum - start.momentum;
+  const startQuadrant = quadrantFor(start.ratio, start.momentum);
+  const distance = Math.hypot(ratioWindow, momentumWindow);
   return <section className="detail-card" aria-live="polite">
     <div className="detail-top"><div><p className="section-kicker">SELECTED SECTOR</p><h2>{sector.ticker}</h2><p>{sector.name}</p></div><span className={`quadrant-badge ${sector.quadrant}`}>{labels[sector.quadrant]}</span></div>
-    <div className="direction-line"><span className="direction-arrow" aria-hidden="true">↗</span><span>{direction(sector.heading_degrees)}</span><span>·</span><span>속도 {sector.velocity?.toFixed(2) ?? "—"}</span></div>
-    <div className="metric-grid"><div><span>RS-RATIO</span><strong>{sector.ratio.toFixed(2)}</strong><small className={ratioChange >= 0 ? "positive" : "negative"}>{ratioChange >= 0 ? "+" : ""}{ratioChange.toFixed(2)} 주간</small></div><div><span>RS-MOMENTUM</span><strong>{sector.momentum.toFixed(2)}</strong><small className={momentumChange >= 0 ? "positive" : "negative"}>{momentumChange >= 0 ? "+" : ""}{momentumChange.toFixed(2)} 주간</small></div></div>
+    <div className="direction-line"><span className="direction-arrow" aria-hidden="true">{arrowForHeading(sector.heading_degrees)}</span><span>{direction(sector.heading_degrees)}</span><span>·</span><span>속도 {sector.velocity?.toFixed(2) ?? "—"}</span></div>
+    <div className="metric-grid"><div><span>RS-RATIO</span><strong>{sector.ratio.toFixed(2)}</strong><small className={ratioChange >= 0 ? "positive" : "negative"}>{ratioChange >= 0 ? "+" : ""}{ratioChange.toFixed(2)} 최근 1주</small></div><div><span>RS-MOMENTUM</span><strong>{sector.momentum.toFixed(2)}</strong><small className={momentumChange >= 0 ? "positive" : "negative"}>{momentumChange >= 0 ? "+" : ""}{momentumChange.toFixed(2)} 최근 1주</small></div></div>
+    <div className="trajectory-summary"><div><span>최근 {tail}주 궤적</span><strong>{labels[startQuadrant]} <b>→</b> {labels[sector.quadrant]}</strong></div><div><span>이동 거리</span><strong>{distance.toFixed(2)}</strong></div><div className="trajectory-deltas"><span>Ratio {ratioWindow >= 0 ? "+" : ""}{ratioWindow.toFixed(2)}</span><span>Momentum {momentumWindow >= 0 ? "+" : ""}{momentumWindow.toFixed(2)}</span></div></div>
   </section>;
 }
 
@@ -77,9 +96,9 @@ export default function App() {
 
     <section className="signal-band" aria-labelledby="signals-title"><div className="signal-intro"><p className="section-kicker">THIS WEEK</p><h2 id="signals-title">핵심 신호</h2><span className={snapshot.quality.publishable ? "data-check pass" : "data-check hold"}>{snapshot.quality.publishable ? "검증 통과" : "검증 보류"} · {snapshot.quality.symbols_received}/{snapshot.quality.symbols_expected}</span></div><div className="signal-list">{signals.length ? signals.map((event) => <button key={event.event_id} className="signal-item" onClick={() => { setFilter("all"); setActive(event.ticker); }}><span className={`event-pin ${event.severity}`} aria-hidden="true" /><div><strong>{event.ticker}</strong><span>{eventLabel(event)}</span></div><small>{eventDetail(event)}</small></button>) : <p className="no-signal">표시할 비교 신호가 없습니다.</p>}</div></section>
 
-    <section className="workspace-grid"><section className="chart-panel" aria-label="RRG sector map"><div className="panel-header"><div><p className="section-kicker">MARKET MAP</p><h2>섹터 회전</h2><span>점은 현재 위치, 선은 최근 {tail}주 흐름입니다.</span></div><div className="legend" aria-label="사분면 범례"><span className="leading">Leading</span><span className="weakening">Weakening</span><span className="lagging">Lagging</span><span className="improving">Improving</span></div></div><div className="control-stack"><div className="segmented-control" role="group" aria-label="사분면 필터">{(["all", "leading", "weakening", "lagging", "improving"] as const).map((value) => <button key={value} className={filter === value ? "active" : ""} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value === "all" ? "All" : shortLabels[value]}</button>)}</div><div className="segmented-control compact" role="group" aria-label="표시 기간">{tailChoices.map((value) => <button key={value} disabled={value > availableTail} className={tail === value ? "active" : ""} aria-pressed={tail === value} onClick={() => setTail(value)}>{value}W</button>)}</div></div><div className="chart-frame"><RRGChart sectors={visible} active={selected?.ticker ?? null} tail={tail} onPick={setActive} /></div><div className="chart-note"><span>{visible.length}개 섹터 표시</span><span>기준선 100 · SPY 대비</span></div></section>
+    <section className="workspace-grid"><section className="chart-panel" aria-label="RRG sector map"><div className="panel-header"><div><p className="section-kicker">MARKET MAP</p><h2>섹터 회전</h2><span><b>○</b> 시작점 · <b>→</b> 최근 이동 · <b>●</b> 최신 위치 · 최근 {tail}주</span></div><div className="legend" aria-label="사분면 범례"><span className="leading">Leading</span><span className="weakening">Weakening</span><span className="lagging">Lagging</span><span className="improving">Improving</span></div></div><div className="control-stack"><div className="segmented-control" role="group" aria-label="사분면 필터">{(["all", "leading", "weakening", "lagging", "improving"] as const).map((value) => <button key={value} className={filter === value ? "active" : ""} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value === "all" ? "All" : shortLabels[value]}</button>)}</div><div className="segmented-control compact" role="group" aria-label="표시 기간">{tailChoices.map((value) => <button key={value} disabled={value > availableTail} className={tail === value ? "active" : ""} aria-pressed={tail === value} onClick={() => setTail(value)}>{value}W</button>)}</div></div><div className="chart-frame"><RRGChart sectors={visible} active={selected?.ticker ?? null} tail={tail} onPick={setActive} /></div><div className="chart-note"><span>{visible.length}개 섹터 표시</span><span>기준선 100 · SPY 대비</span></div></section>
 
-      <aside className="inspector-panel">{selected && <SectorDetail sector={selected} />}<section className="sector-navigator"><div className="navigator-head"><p className="section-kicker">SECTOR NAVIGATOR</p><span>{snapshot.sectors.length}</span></div><div className="sector-grid">{snapshot.sectors.map((sector) => <button key={sector.ticker} className={`${sector.ticker === selected?.ticker ? "active" : ""} ${sector.quadrant}`} aria-pressed={sector.ticker === selected?.ticker} onClick={() => { setFilter("all"); setActive(sector.ticker); }}><span className="sector-dot" /><strong>{sector.ticker}</strong><small>{shortLabels[sector.quadrant]}</small></button>)}</div></section></aside>
+      <aside className="inspector-panel">{selected && <SectorDetail sector={selected} tail={tail} />}<section className="sector-navigator"><div className="navigator-head"><p className="section-kicker">SECTOR NAVIGATOR</p><span>{snapshot.sectors.length}</span></div><div className="sector-grid">{snapshot.sectors.map((sector) => <button key={sector.ticker} className={`${sector.ticker === selected?.ticker ? "active" : ""} ${sector.quadrant}`} aria-pressed={sector.ticker === selected?.ticker} onClick={() => { setFilter("all"); setActive(sector.ticker); }}><span className="sector-dot" /><strong>{sector.ticker}</strong><small>{shortLabels[sector.quadrant]}</small></button>)}</div></section></aside>
     </section>
 
     <footer className="app-footer"><span>Snapshot {snapshot.snapshot_id}</span><span>Weekly adjusted close · RRG-style proxy</span></footer>
