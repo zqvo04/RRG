@@ -116,7 +116,7 @@ export default function App() {
   const selected = snapshot.sectors.find((sector) => sector.ticker === active) ?? visible[0];
   const signals = (snapshot.events ?? []).slice(0, 3);
   const usesSimplifiedTrail = tail >= 12;
-  const simplificationLabel = tail >= 16 ? " · 4주 간격 실제 관측점" : " · 2주 간격 실제 관측점";
+  const simplificationLabel = tail >= 16 ? " · 4주 간격 실제 경로 · 완화 연결" : " · 2주 간격 실제 경로 · 완화 연결";
   const selectSector = (ticker: string) => { setFilter("all"); setActive(ticker); };
 
   return <main className="atlas-shell">

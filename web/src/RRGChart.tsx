@@ -4,6 +4,7 @@ import type { SectorState } from "./types";
 const quadrantLabels = { leading: "LEADING", weakening: "WEAKENING", lagging: "LAGGING", improving: "IMPROVING" } as const;
 
 type PlotPoint = { ratio: number; momentum: number };
+type CanvasPoint = { x: number; y: number };
 
 type Series = {
   sector: SectorState;
@@ -29,6 +30,40 @@ function linePath(points: PlotPoint[], x: (value: number) => number, y: (value: 
   return points.map((point, index) => `${index ? "L" : "M"}${x(point.ratio)} ${y(point.momentum)}`).join(" ");
 }
 
+function roundedTrailPath(points: PlotPoint[], x: (value: number) => number, y: (value: number) => number) {
+  if (points.length < 3) return linePath(points, x, y);
+  const canvasPoints: CanvasPoint[] = points.map((point) => ({ x: x(point.ratio), y: y(point.momentum) }));
+  const cornerRadius = 1.1;
+  let path = `M${canvasPoints[0]!.x} ${canvasPoints[0]!.y}`;
+
+  for (let index = 1; index < canvasPoints.length - 1; index += 1) {
+    const previous = canvasPoints[index - 1]!;
+    const current = canvasPoints[index]!;
+    const next = canvasPoints[index + 1]!;
+    const incomingLength = Math.hypot(previous.x - current.x, previous.y - current.y);
+    const outgoingLength = Math.hypot(next.x - current.x, next.y - current.y);
+
+    if (!incomingLength || !outgoingLength) {
+      path += ` L${current.x} ${current.y}`;
+      continue;
+    }
+
+    const radius = Math.min(cornerRadius, incomingLength * 0.22, outgoingLength * 0.22);
+    const before = {
+      x: current.x + ((previous.x - current.x) / incomingLength) * radius,
+      y: current.y + ((previous.y - current.y) / incomingLength) * radius,
+    };
+    const after = {
+      x: current.x + ((next.x - current.x) / outgoingLength) * radius,
+      y: current.y + ((next.y - current.y) / outgoingLength) * radius,
+    };
+    path += ` L${before.x} ${before.y} Q${current.x} ${current.y} ${after.x} ${after.y}`;
+  }
+
+  const latest = canvasPoints.at(-1)!;
+  return `${path} L${latest.x} ${latest.y}`;
+}
+
 export function RRGChart({ sectors, active, tail, onPick }: { sectors: SectorState[]; active: string | null; tail: number; onPick: (ticker: string) => void }) {
   const { domain, series, samplingWeeks } = useMemo(() => {
     const samplingWeeks = tail >= 16 ? 4 : tail >= 12 ? 2 : 1;
@@ -51,7 +86,7 @@ export function RRGChart({ sectors, active, tail, onPick }: { sectors: SectorSta
   const momentumBaseline = y(100);
   const simplified = samplingWeeks > 1;
   const description = simplified
-    ? `최근 ${tail}주 궤적입니다. 중간 경로는 ${samplingWeeks}주 간격의 실제 주간 관측점만 시간 순서대로 연결했으며, 시작점과 최신 위치는 실제 값입니다.`
+    ? `최근 ${tail}주 궤적입니다. ${samplingWeeks}주 간격의 실제 주간 관측점을 시간 순서대로 연결하고, 각 꼭짓점만 작은 반경으로 완화해 표시합니다. 시작점과 최신 위치는 실제 값입니다.`
     : `최근 ${tail}주 실제 궤적입니다.`;
 
   return <svg className={`rrg-canvas ${simplified ? "simplified-horizon" : ""}`} viewBox="0 0 100 100" role="img" aria-label={`SPY 대비 주간 섹터 RRG 지도. ${description}`}>
@@ -65,7 +100,7 @@ export function RRGChart({ sectors, active, tail, onPick }: { sectors: SectorSta
       <line x1={ratioBaseline} x2={ratioBaseline} y1="8" y2="92" className="origin" />
       <line x1="8" x2="92" y1={momentumBaseline} y2={momentumBaseline} className="origin" />
       {series.map(({ sector, displayTrail, start, latest }) => <g key={sector.ticker} className={`sector ${sector.quadrant} ${active && active !== sector.ticker ? "muted" : ""} ${active === sector.ticker ? "selected" : ""}`} tabIndex={0} role="button" onClick={() => onPick(sector.ticker)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") onPick(sector.ticker); }} aria-label={`${sector.ticker}, ${sector.quadrant}, ${description} Ratio ${sector.ratio.toFixed(2)}, Momentum ${sector.momentum.toFixed(2)}`}>
-        <path className="tail" d={linePath(displayTrail, x, y)} />
+        <path className="tail" d={simplified ? roundedTrailPath(displayTrail, x, y) : linePath(displayTrail, x, y)} />
         <circle className="start-dot" cx={x(start.ratio)} cy={y(start.momentum)} r="0.72" />
         <circle className="dot" cx={x(latest.ratio)} cy={y(latest.momentum)} r={active === sector.ticker ? 1.02 : 0.68} />
       </g>)}
