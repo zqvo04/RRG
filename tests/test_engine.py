@@ -6,7 +6,7 @@ from pipeline.config import EngineSettings
 from pipeline.engine import build_sector_state, quadrant
 from pipeline.models import PriceBar
 
-SETTINGS = EngineSettings(80, 52, 13, 4, 12, "rrg_proxy_v1")
+SETTINGS = EngineSettings(80, 52, 13, 4, 12, 26, "rrg_proxy_v2")
 
 
 def series(symbol: str, multiplier: float) -> list[PriceBar]:
@@ -21,13 +21,12 @@ def test_quadrants_cover_all_combinations() -> None:
     assert quadrant(99.9, 100) == "improving"
 
 
-def test_state_has_current_point_plus_12_prior_observations() -> None:
+def test_state_has_current_point_plus_26_prior_observations() -> None:
     state = build_sector_state("XLK", "Information Technology", series("XLK", 1.1), series("SPY", 1), SETTINGS)
-    assert len(state.trail) == 13
+    assert len(state.trail) == 27
     assert state.velocity is not None
 
 
 def test_short_history_is_rejected() -> None:
     with pytest.raises(Exception, match="minimum"):
         build_sector_state("XLK", "Information Technology", series("XLK", 1)[:20], series("SPY", 1)[:20], SETTINGS)
-

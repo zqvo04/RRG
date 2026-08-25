@@ -12,6 +12,7 @@ class EngineSettings:
     ratio_ema_weeks: int
     momentum_lag_weeks: int
     default_tail_weeks: int
+    max_tail_weeks: int
     formula_version: str
 
 
@@ -23,6 +24,9 @@ def load_engine_settings(path: Path) -> EngineSettings:
     return EngineSettings(**load_json(path)["engine"])
 
 
+def load_event_settings(path: Path) -> dict:
+    return load_json(path).get("events", {})
+
+
 def load_universe(path: Path) -> dict:
     return load_json(path)
-

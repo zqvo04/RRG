@@ -56,21 +56,45 @@ jobs:
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "data: publish weekly RRG snapshot"
           git push origin data
-      - name: Prepare static snapshot files
+      - id: snapshot
+        name: Prepare static snapshot files
         run: |
           rm -rf web/public/data/snapshots web/public/data/latest.json web/public/data/index.json
           mkdir -p web/public/data
           cp data-worktree/latest.json data-worktree/index.json web/public/data/
           cp -R data-worktree/snapshots web/public/data/
+          SNAPSHOT_ID="$(node -e "const s=require('./data-worktree/latest.json'); process.stdout.write(s.snapshot_id)")"
+          echo "snapshot_id=${SNAPSHOT_ID}" >> "$GITHUB_OUTPUT"
       - name: Build web
         working-directory: web
         run: npm ci && npm run build
       - id: pages
-        continue-on-error: true
         uses: actions/configure-pages@v5
-      - if: steps.pages.outcome == 'success'
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v3
         with: { path: web/dist }
-      - if: steps.pages.outcome == 'success'
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify public RRG deployment
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          EXPECTED_SNAPSHOT_ID: ${{ steps.snapshot.outputs.snapshot_id }}
+        run: |
+          set -euo pipefail
+          test -n "$PAGE_URL"
+          test -n "$EXPECTED_SNAPSHOT_ID"
+          for attempt in {1..12}; do
+            echo "Public deployment check ${attempt}/12: ${PAGE_URL}"
+            curl --fail --silent --show-error --location "${PAGE_URL}" -o deployed-index.html || true
+            curl --fail --silent --show-error --location "${PAGE_URL}data/latest.json" -o deployed-latest.json || true
+            if test -s deployed-index.html && grep -q 'assets/index-' deployed-index.html && test -s deployed-latest.json; then
+              ACTUAL_SNAPSHOT_ID="$(node -e "const s=require('./deployed-latest.json'); process.stdout.write(s.snapshot_id)")"
+              if test "$ACTUAL_SNAPSHOT_ID" = "$EXPECTED_SNAPSHOT_ID"; then
+                echo "Verified public RRG deployment for ${ACTUAL_SNAPSHOT_ID}."
+                exit 0
+              fi
+              echo "Expected ${EXPECTED_SNAPSHOT_ID}; public site returned ${ACTUAL_SNAPSHOT_ID}."
+            fi
+            sleep 10
+          done
+          echo "Public RRG deployment could not be verified."
+          exit 1

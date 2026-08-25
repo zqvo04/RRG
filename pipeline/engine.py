@@ -17,9 +17,12 @@ def ema(values: list[float], period: int) -> list[float]:
 
 
 def quadrant(ratio: float, momentum: float) -> str:
-    if ratio >= 100 and momentum >= 100: return "leading"
-    if ratio >= 100: return "weakening"
-    if momentum < 100: return "lagging"
+    if ratio >= 100 and momentum >= 100:
+        return "leading"
+    if ratio >= 100:
+        return "weakening"
+    if momentum < 100:
+        return "lagging"
     return "improving"
 
 
@@ -36,10 +39,10 @@ def build_sector_state(ticker: str, name: str, bars: list[PriceBar], benchmark: 
     ratios = [100 * value / average for value, average in zip(relative, baseline)]
     lag = settings.momentum_lag_weeks
     points = [RRGPoint(common[index], round(ratios[index], 4), round(100 * ratios[index] / ratios[index - lag], 4)) for index in range(lag, len(ratios))]
-    if len(points) < settings.default_tail_weeks + 1:
-        raise DataValidationError(f"{ticker} does not have enough Ratio/Momentum observations")
-    trail, latest, previous = points[-(settings.default_tail_weeks + 1):], points[-1], points[-2]
+    required_points = settings.max_tail_weeks + 1
+    if len(points) < required_points:
+        raise DataValidationError(f"{ticker} does not have enough Ratio/Momentum observations for a {settings.max_tail_weeks}-week tail")
+    trail, latest, previous = points[-required_points:], points[-1], points[-2]
     dx, dy = latest.ratio - previous.ratio, latest.momentum - previous.momentum
     heading = (degrees(atan2(dy, dx)) + 360) % 360 if dx or dy else None
     return SectorState(ticker, name, latest.ratio, latest.momentum, quadrant(latest.ratio, latest.momentum), round(heading, 2) if heading is not None else None, round(hypot(dx, dy), 4), trail)
-

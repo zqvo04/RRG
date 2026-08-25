@@ -5,7 +5,11 @@
     "ratio_ema_weeks": 13,
     "momentum_lag_weeks": 4,
     "default_tail_weeks": 12,
-    "formula_version": "rrg_proxy_v1"
+    "max_tail_weeks": 26,
+    "formula_version": "rrg_proxy_v2"
+  },
+  "events": {
+    "boundary_distance": 1.0,
+    "strong_mover_count": 3
   }
 }
-
