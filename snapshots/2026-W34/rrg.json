@@ -2,15 +2,16 @@
   "snapshot_id": "2026-W34",
   "status": "verified",
   "as_of_week": "2026-08-21",
-  "generated_at": "2026-08-22T08:49:16.531042+00:00",
+  "generated_at": "2026-08-25T10:26:07.644601+00:00",
   "universe_id": "us_sector_spdr_v1",
   "benchmark": "SPY",
   "frequency": "weekly",
   "weekly_anchor": "friday_regular_close",
   "anchor_timezone": "America/New_York",
   "price_basis": "weekly_adjusted_close",
-  "formula_version": "rrg_proxy_v1",
-  "tail_weeks": 12,
+  "formula_version": "rrg_proxy_v2",
+  "tail_weeks": 26,
+  "default_tail_weeks": 12,
   "sectors": [
     {
       "ticker": "XLB",
@@ -21,6 +22,76 @@
       "heading_degrees": 18.07,
       "velocity": 3.2101,
       "trail": [
+        {
+          "week": "2026-02-20",
+          "ratio": 107.4194,
+          "momentum": 100.8165
+        },
+        {
+          "week": "2026-02-27",
+          "ratio": 107.5121,
+          "momentum": 103.425
+        },
+        {
+          "week": "2026-03-06",
+          "ratio": 102.0482,
+          "momentum": 94.9068
+        },
+        {
+          "week": "2026-03-13",
+          "ratio": 101.8889,
+          "momentum": 92.027
+        },
+        {
+          "week": "2026-03-20",
+          "ratio": 99.2236,
+          "momentum": 92.3703
+        },
+        {
+          "week": "2026-03-27",
+          "ratio": 105.2015,
+          "momentum": 97.8509
+        },
+        {
+          "week": "2026-04-03",
+          "ratio": 104.1147,
+          "momentum": 102.0251
+        },
+        {
+          "week": "2026-04-10",
+          "ratio": 103.0562,
+          "momentum": 101.1456
+        },
+        {
+          "week": "2026-04-17",
+          "ratio": 98.6702,
+          "momentum": 99.4423
+        },
+        {
+          "week": "2026-04-24",
+          "ratio": 98.4711,
+          "momentum": 93.6024
+        },
+        {
+          "week": "2026-05-01",
+          "ratio": 96.9704,
+          "momentum": 93.138
+        },
+        {
+          "week": "2026-05-08",
+          "ratio": 95.8419,
+          "momentum": 92.9996
+        },
+        {
+          "week": "2026-05-15",
+          "ratio": 94.1574,
+          "momentum": 95.4263
+        },
+        {
+          "week": "2026-05-22",
+          "ratio": 94.2207,
+          "momentum": 95.6836
+        },
         {
           "week": "2026-05-29",
           "ratio": 95.2124,
@@ -98,6 +169,76 @@
       "velocity": 2.9852,
       "trail": [
         {
+          "week": "2026-02-20",
+          "ratio": 99.8075,
+          "momentum": 99.9798
+        },
+        {
+          "week": "2026-02-27",
+          "ratio": 101.1819,
+          "momentum": 99.4107
+        },
+        {
+          "week": "2026-03-06",
+          "ratio": 102.3173,
+          "momentum": 103.8232
+        },
+        {
+          "week": "2026-03-13",
+          "ratio": 101.0389,
+          "momentum": 102.0783
+        },
+        {
+          "week": "2026-03-20",
+          "ratio": 100.7666,
+          "momentum": 100.9609
+        },
+        {
+          "week": "2026-03-27",
+          "ratio": 98.8086,
+          "momentum": 97.6544
+        },
+        {
+          "week": "2026-04-03",
+          "ratio": 99.7361,
+          "momentum": 97.4773
+        },
+        {
+          "week": "2026-04-10",
+          "ratio": 98.4589,
+          "momentum": 97.4465
+        },
+        {
+          "week": "2026-04-17",
+          "ratio": 98.6795,
+          "momentum": 97.9289
+        },
+        {
+          "week": "2026-04-24",
+          "ratio": 95.875,
+          "momentum": 97.0311
+        },
+        {
+          "week": "2026-05-01",
+          "ratio": 96.5104,
+          "momentum": 96.7658
+        },
+        {
+          "week": "2026-05-08",
+          "ratio": 95.2203,
+          "momentum": 96.7108
+        },
+        {
+          "week": "2026-05-15",
+          "ratio": 95.0932,
+          "momentum": 96.3657
+        },
+        {
+          "week": "2026-05-22",
+          "ratio": 94.6073,
+          "momentum": 98.6778
+        },
+        {
           "week": "2026-05-29",
           "ratio": 94.3217,
           "momentum": 97.7321
@@ -173,6 +314,76 @@
       "heading_degrees": 75.38,
       "velocity": 5.5065,
       "trail": [
+        {
+          "week": "2026-02-20",
+          "ratio": 97.7542,
+          "momentum": 96.6931
+        },
+        {
+          "week": "2026-02-27",
+          "ratio": 98.066,
+          "momentum": 98.8344
+        },
+        {
+          "week": "2026-03-06",
+          "ratio": 98.2628,
+          "momentum": 101.0403
+        },
+        {
+          "week": "2026-03-13",
+          "ratio": 97.1053,
+          "momentum": 99.675
+        },
+        {
+          "week": "2026-03-20",
+          "ratio": 96.6406,
+          "momentum": 98.8608
+        },
+        {
+          "week": "2026-03-27",
+          "ratio": 97.5448,
+          "momentum": 99.4685
+        },
+        {
+          "week": "2026-04-03",
+          "ratio": 96.9984,
+          "momentum": 98.7133
+        },
+        {
+          "week": "2026-04-10",
+          "ratio": 98.0466,
+          "momentum": 100.9694
+        },
+        {
+          "week": "2026-04-17",
+          "ratio": 100.0513,
+          "momentum": 103.5293
+        },
+        {
+          "week": "2026-04-24",
+          "ratio": 98.3646,
+          "momentum": 100.8404
+        },
+        {
+          "week": "2026-05-01",
+          "ratio": 97.7626,
+          "momentum": 100.7878
+        },
+        {
+          "week": "2026-05-08",
+          "ratio": 97.2251,
+          "momentum": 99.1621
+        },
+        {
+          "week": "2026-05-15",
+          "ratio": 94.864,
+          "momentum": 94.8154
+        },
+        {
+          "week": "2026-05-22",
+          "ratio": 96.7073,
+          "momentum": 98.3152
+        },
         {
           "week": "2026-05-29",
           "ratio": 97.1348,
@@ -250,6 +461,76 @@
       "velocity": 2.3798,
       "trail": [
         {
+          "week": "2026-02-20",
+          "ratio": 104.9084,
+          "momentum": 101.7994
+        },
+        {
+          "week": "2026-02-27",
+          "ratio": 106.761,
+          "momentum": 103.7615
+        },
+        {
+          "week": "2026-03-06",
+          "ratio": 103.2422,
+          "momentum": 96.2641
+        },
+        {
+          "week": "2026-03-13",
+          "ratio": 103.0227,
+          "momentum": 94.5711
+        },
+        {
+          "week": "2026-03-20",
+          "ratio": 100.5482,
+          "momentum": 95.8438
+        },
+        {
+          "week": "2026-03-27",
+          "ratio": 103.4464,
+          "momentum": 96.8954
+        },
+        {
+          "week": "2026-04-03",
+          "ratio": 100.1301,
+          "momentum": 96.9856
+        },
+        {
+          "week": "2026-04-10",
+          "ratio": 97.6028,
+          "momentum": 94.739
+        },
+        {
+          "week": "2026-04-17",
+          "ratio": 94.366,
+          "momentum": 93.8515
+        },
+        {
+          "week": "2026-04-24",
+          "ratio": 95.4574,
+          "momentum": 92.2771
+        },
+        {
+          "week": "2026-05-01",
+          "ratio": 96.2365,
+          "momentum": 96.1115
+        },
+        {
+          "week": "2026-05-08",
+          "ratio": 94.842,
+          "momentum": 97.1714
+        },
+        {
+          "week": "2026-05-15",
+          "ratio": 95.8228,
+          "momentum": 101.5438
+        },
+        {
+          "week": "2026-05-22",
+          "ratio": 95.832,
+          "momentum": 100.3925
+        },
+        {
           "week": "2026-05-29",
           "ratio": 93.3735,
           "momentum": 97.025
@@ -325,6 +606,76 @@
       "heading_degrees": 359.99,
       "velocity": 3.201,
       "trail": [
+        {
+          "week": "2026-02-20",
+          "ratio": 110.2848,
+          "momentum": 103.9637
+        },
+        {
+          "week": "2026-02-27",
+          "ratio": 110.8886,
+          "momentum": 102.5196
+        },
+        {
+          "week": "2026-03-06",
+          "ratio": 112.1338,
+          "momentum": 101.0424
+        },
+        {
+          "week": "2026-03-13",
+          "ratio": 113.503,
+          "momentum": 101.0026
+        },
+        {
+          "week": "2026-03-20",
+          "ratio": 115.7002,
+          "momentum": 104.9104
+        },
+        {
+          "week": "2026-03-27",
+          "ratio": 121.1953,
+          "momentum": 109.2946
+        },
+        {
+          "week": "2026-04-03",
+          "ratio": 109.2645,
+          "momentum": 97.4411
+        },
+        {
+          "week": "2026-04-10",
+          "ratio": 101.1572,
+          "momentum": 89.1229
+        },
+        {
+          "week": "2026-04-17",
+          "ratio": 94.3967,
+          "momentum": 81.5874
+        },
+        {
+          "week": "2026-04-24",
+          "ratio": 97.4619,
+          "momentum": 80.4172
+        },
+        {
+          "week": "2026-05-01",
+          "ratio": 99.9281,
+          "momentum": 91.4552
+        },
+        {
+          "week": "2026-05-08",
+          "ratio": 93.4173,
+          "momentum": 92.3486
+        },
+        {
+          "week": "2026-05-15",
+          "ratio": 99.5545,
+          "momentum": 105.4639
+        },
+        {
+          "week": "2026-05-22",
+          "ratio": 98.9471,
+          "momentum": 101.5238
+        },
         {
           "week": "2026-05-29",
           "ratio": 93.3117,
@@ -402,6 +753,76 @@
       "velocity": 0.0484,
       "trail": [
         {
+          "week": "2026-02-20",
+          "ratio": 97.409,
+          "momentum": 100.3414
+        },
+        {
+          "week": "2026-02-27",
+          "ratio": 96.4829,
+          "momentum": 98.719
+        },
+        {
+          "week": "2026-03-06",
+          "ratio": 97.2357,
+          "momentum": 97.7147
+        },
+        {
+          "week": "2026-03-13",
+          "ratio": 96.0636,
+          "momentum": 99.5341
+        },
+        {
+          "week": "2026-03-20",
+          "ratio": 98.4574,
+          "momentum": 101.0763
+        },
+        {
+          "week": "2026-03-27",
+          "ratio": 98.7982,
+          "momentum": 102.3997
+        },
+        {
+          "week": "2026-04-03",
+          "ratio": 99.1069,
+          "momentum": 101.9244
+        },
+        {
+          "week": "2026-04-10",
+          "ratio": 98.3283,
+          "momentum": 102.3575
+        },
+        {
+          "week": "2026-04-17",
+          "ratio": 97.5527,
+          "momentum": 99.0811
+        },
+        {
+          "week": "2026-04-24",
+          "ratio": 95.8262,
+          "momentum": 96.9919
+        },
+        {
+          "week": "2026-05-01",
+          "ratio": 96.4277,
+          "momentum": 97.2967
+        },
+        {
+          "week": "2026-05-08",
+          "ratio": 93.9179,
+          "momentum": 95.5147
+        },
+        {
+          "week": "2026-05-15",
+          "ratio": 94.3457,
+          "momentum": 96.7126
+        },
+        {
+          "week": "2026-05-22",
+          "ratio": 95.7396,
+          "momentum": 99.9096
+        },
+        {
           "week": "2026-05-29",
           "ratio": 94.5628,
           "momentum": 98.066
@@ -477,6 +898,76 @@
       "heading_degrees": 37.96,
       "velocity": 6.1088,
       "trail": [
+        {
+          "week": "2026-02-20",
+          "ratio": 100.5745,
+          "momentum": 98.889
+        },
+        {
+          "week": "2026-02-27",
+          "ratio": 102.7791,
+          "momentum": 103.187
+        },
+        {
+          "week": "2026-03-06",
+          "ratio": 99.9575,
+          "momentum": 98.5129
+        },
+        {
+          "week": "2026-03-13",
+          "ratio": 99.611,
+          "momentum": 97.3174
+        },
+        {
+          "week": "2026-03-20",
+          "ratio": 98.64,
+          "momentum": 98.0765
+        },
+        {
+          "week": "2026-03-27",
+          "ratio": 99.8833,
+          "momentum": 97.1825
+        },
+        {
+          "week": "2026-04-03",
+          "ratio": 99.1119,
+          "momentum": 99.1541
+        },
+        {
+          "week": "2026-04-10",
+          "ratio": 96.5438,
+          "momentum": 96.9208
+        },
+        {
+          "week": "2026-04-17",
+          "ratio": 94.2079,
+          "momentum": 95.5068
+        },
+        {
+          "week": "2026-04-24",
+          "ratio": 92.0066,
+          "momentum": 92.1141
+        },
+        {
+          "week": "2026-05-01",
+          "ratio": 92.8613,
+          "momentum": 93.6934
+        },
+        {
+          "week": "2026-05-08",
+          "ratio": 91.023,
+          "momentum": 94.2816
+        },
+        {
+          "week": "2026-05-15",
+          "ratio": 92.9331,
+          "momentum": 98.6469
+        },
+        {
+          "week": "2026-05-22",
+          "ratio": 95.8295,
+          "momentum": 104.155
+        },
         {
           "week": "2026-05-29",
           "ratio": 94.9798,
@@ -554,6 +1045,76 @@
       "velocity": 3.989,
       "trail": [
         {
+          "week": "2026-02-20",
+          "ratio": 106.5888,
+          "momentum": 103.8809
+        },
+        {
+          "week": "2026-02-27",
+          "ratio": 105.9985,
+          "momentum": 103.3867
+        },
+        {
+          "week": "2026-03-06",
+          "ratio": 103.1958,
+          "momentum": 96.9997
+        },
+        {
+          "week": "2026-03-13",
+          "ratio": 101.2887,
+          "momentum": 94.5699
+        },
+        {
+          "week": "2026-03-20",
+          "ratio": 101.0941,
+          "momentum": 94.845
+        },
+        {
+          "week": "2026-03-27",
+          "ratio": 101.7997,
+          "momentum": 96.0388
+        },
+        {
+          "week": "2026-04-03",
+          "ratio": 101.0699,
+          "momentum": 97.9399
+        },
+        {
+          "week": "2026-04-10",
+          "ratio": 101.8555,
+          "momentum": 100.5596
+        },
+        {
+          "week": "2026-04-17",
+          "ratio": 98.7854,
+          "momentum": 97.7163
+        },
+        {
+          "week": "2026-04-24",
+          "ratio": 97.9967,
+          "momentum": 96.2643
+        },
+        {
+          "week": "2026-05-01",
+          "ratio": 97.7286,
+          "momentum": 96.6941
+        },
+        {
+          "week": "2026-05-08",
+          "ratio": 96.2158,
+          "momentum": 94.463
+        },
+        {
+          "week": "2026-05-15",
+          "ratio": 95.6975,
+          "momentum": 96.8742
+        },
+        {
+          "week": "2026-05-22",
+          "ratio": 95.746,
+          "momentum": 97.7033
+        },
+        {
           "week": "2026-05-29",
           "ratio": 95.7888,
           "momentum": 98.0151
@@ -629,6 +1190,76 @@
       "heading_degrees": 234.17,
       "velocity": 3.7696,
       "trail": [
+        {
+          "week": "2026-02-20",
+          "ratio": 98.0193,
+          "momentum": 98.3917
+        },
+        {
+          "week": "2026-02-27",
+          "ratio": 97.4421,
+          "momentum": 98.8005
+        },
+        {
+          "week": "2026-03-06",
+          "ratio": 98.5921,
+          "momentum": 101.2694
+        },
+        {
+          "week": "2026-03-13",
+          "ratio": 99.7744,
+          "momentum": 101.944
+        },
+        {
+          "week": "2026-03-20",
+          "ratio": 100.4129,
+          "momentum": 102.4419
+        },
+        {
+          "week": "2026-03-27",
+          "ratio": 98.9266,
+          "momentum": 101.5234
+        },
+        {
+          "week": "2026-04-03",
+          "ratio": 100.0994,
+          "momentum": 101.5289
+        },
+        {
+          "week": "2026-04-10",
+          "ratio": 101.1367,
+          "momentum": 101.3654
+        },
+        {
+          "week": "2026-04-17",
+          "ratio": 104.0238,
+          "momentum": 103.596
+        },
+        {
+          "week": "2026-04-24",
+          "ratio": 106.2808,
+          "momentum": 107.434
+        },
+        {
+          "week": "2026-05-01",
+          "ratio": 105.4154,
+          "momentum": 105.3107
+        },
+        {
+          "week": "2026-05-08",
+          "ratio": 109.843,
+          "momentum": 108.6085
+        },
+        {
+          "week": "2026-05-15",
+          "ratio": 108.513,
+          "momentum": 104.3156
+        },
+        {
+          "week": "2026-05-22",
+          "ratio": 108.5273,
+          "momentum": 102.1138
+        },
         {
           "week": "2026-05-29",
           "ratio": 111.1675,
@@ -706,6 +1337,76 @@
       "velocity": 1.1815,
       "trail": [
         {
+          "week": "2026-02-20",
+          "ratio": 103.421,
+          "momentum": 103.9993
+        },
+        {
+          "week": "2026-02-27",
+          "ratio": 103.9238,
+          "momentum": 104.3872
+        },
+        {
+          "week": "2026-03-06",
+          "ratio": 103.18,
+          "momentum": 102.2187
+        },
+        {
+          "week": "2026-03-13",
+          "ratio": 102.7209,
+          "momentum": 97.7913
+        },
+        {
+          "week": "2026-03-20",
+          "ratio": 100.4232,
+          "momentum": 97.1013
+        },
+        {
+          "week": "2026-03-27",
+          "ratio": 101.6448,
+          "momentum": 97.8071
+        },
+        {
+          "week": "2026-04-03",
+          "ratio": 101.8845,
+          "momentum": 98.7444
+        },
+        {
+          "week": "2026-04-10",
+          "ratio": 101.0276,
+          "momentum": 98.3515
+        },
+        {
+          "week": "2026-04-17",
+          "ratio": 100.3515,
+          "momentum": 99.9287
+        },
+        {
+          "week": "2026-04-24",
+          "ratio": 98.5899,
+          "momentum": 96.9946
+        },
+        {
+          "week": "2026-05-01",
+          "ratio": 98.9384,
+          "momentum": 97.1084
+        },
+        {
+          "week": "2026-05-08",
+          "ratio": 97.2953,
+          "momentum": 96.3057
+        },
+        {
+          "week": "2026-05-15",
+          "ratio": 95.2583,
+          "momentum": 94.9246
+        },
+        {
+          "week": "2026-05-22",
+          "ratio": 97.7088,
+          "momentum": 99.1062
+        },
+        {
           "week": "2026-05-29",
           "ratio": 95.7501,
           "momentum": 96.7775
@@ -782,6 +1483,76 @@
       "velocity": 3.8558,
       "trail": [
         {
+          "week": "2026-02-20",
+          "ratio": 104.3685,
+          "momentum": 107.1669
+        },
+        {
+          "week": "2026-02-27",
+          "ratio": 106.831,
+          "momentum": 108.1539
+        },
+        {
+          "week": "2026-03-06",
+          "ratio": 105.7161,
+          "momentum": 106.4482
+        },
+        {
+          "week": "2026-03-13",
+          "ratio": 106.6387,
+          "momentum": 99.9348
+        },
+        {
+          "week": "2026-03-20",
+          "ratio": 102.7743,
+          "momentum": 98.4725
+        },
+        {
+          "week": "2026-03-27",
+          "ratio": 106.8445,
+          "momentum": 100.0126
+        },
+        {
+          "week": "2026-04-03",
+          "ratio": 104.257,
+          "momentum": 98.6198
+        },
+        {
+          "week": "2026-04-10",
+          "ratio": 101.6903,
+          "momentum": 95.3597
+        },
+        {
+          "week": "2026-04-17",
+          "ratio": 96.2391,
+          "momentum": 93.6412
+        },
+        {
+          "week": "2026-04-24",
+          "ratio": 96.3508,
+          "momentum": 90.1786
+        },
+        {
+          "week": "2026-05-01",
+          "ratio": 96.741,
+          "momentum": 92.7909
+        },
+        {
+          "week": "2026-05-08",
+          "ratio": 92.009,
+          "momentum": 90.4796
+        },
+        {
+          "week": "2026-05-15",
+          "ratio": 91.367,
+          "momentum": 94.9375
+        },
+        {
+          "week": "2026-05-22",
+          "ratio": 94.4896,
+          "momentum": 98.0683
+        },
+        {
           "week": "2026-05-29",
           "ratio": 92.3837,
           "momentum": 95.4959
@@ -853,6 +1624,197 @@
     "symbols_expected": 12,
     "symbols_received": 12,
     "dates_aligned": true,
-    "publishable": true
+    "publishable": true,
+    "checks": {
+      "symbol_set": {
+        "passed": true,
+        "observed": 12,
+        "expected": 12,
+        "message": "All benchmark and sector series were received."
+      },
+      "history_length": {
+        "passed": true,
+        "observed": 426,
+        "expected": 52,
+        "message": "Every series has the minimum completed-week history."
+      },
+      "duplicate_weeks": {
+        "passed": true,
+        "observed": [],
+        "expected": [],
+        "message": "No completed-week duplicates are present."
+      },
+      "positive_prices": {
+        "passed": true,
+        "observed": [],
+        "expected": [],
+        "message": "All adjusted close values are positive."
+      },
+      "date_alignment": {
+        "passed": true,
+        "observed": [
+          "2026-08-21"
+        ],
+        "expected": [
+          "2026-08-21"
+        ],
+        "message": "All sectors align to the expected completed Friday."
+      }
+    }
+  },
+  "events": [
+    {
+      "event_id": "strong-move:XLI:2026-08-21",
+      "kind": "strong_move",
+      "severity": "medium",
+      "ticker": "XLI",
+      "message": "XLI is one of this week's strongest RRG movers.",
+      "previous": {
+        "snapshot_id": "2026-W34",
+        "ratio": 97.8802,
+        "momentum": 95.8476
+      },
+      "current": {
+        "ratio": 97.8802,
+        "momentum": 95.8476,
+        "heading_degrees": 245.37,
+        "velocity": 3.989
+      }
+    },
+    {
+      "event_id": "boundary-approach:XLK:2026-08-21",
+      "kind": "boundary_approach",
+      "severity": "medium",
+      "ticker": "XLK",
+      "message": "XLK is within 1.0 points of the 100 baseline on ratio, momentum.",
+      "previous": {
+        "snapshot_id": "2026-W34",
+        "ratio": 99.8417,
+        "momentum": 100.2293
+      },
+      "current": {
+        "ratio": 99.8417,
+        "momentum": 100.2293,
+        "axes": [
+          "ratio",
+          "momentum"
+        ],
+        "distance": 0.158299999999997
+      }
+    },
+    {
+      "event_id": "boundary-approach:XLP:2026-08-21",
+      "kind": "boundary_approach",
+      "severity": "medium",
+      "ticker": "XLP",
+      "message": "XLP is within 1.0 points of the 100 baseline on ratio, momentum.",
+      "previous": {
+        "snapshot_id": "2026-W34",
+        "ratio": 99.1454,
+        "momentum": 99.7823
+      },
+      "current": {
+        "ratio": 99.1454,
+        "momentum": 99.7823,
+        "axes": [
+          "ratio",
+          "momentum"
+        ],
+        "distance": 0.21769999999999357
+      }
+    },
+    {
+      "event_id": "strong-move:XLV:2026-08-21",
+      "kind": "strong_move",
+      "severity": "medium",
+      "ticker": "XLV",
+      "message": "XLV is one of this week's strongest RRG movers.",
+      "previous": {
+        "snapshot_id": "2026-W34",
+        "ratio": 105.6992,
+        "momentum": 102.0999
+      },
+      "current": {
+        "ratio": 105.6992,
+        "momentum": 102.0999,
+        "heading_degrees": 37.96,
+        "velocity": 6.1088
+      }
+    },
+    {
+      "event_id": "strong-move:XLY:2026-08-21",
+      "kind": "strong_move",
+      "severity": "medium",
+      "ticker": "XLY",
+      "message": "XLY is one of this week's strongest RRG movers.",
+      "previous": {
+        "snapshot_id": "2026-W34",
+        "ratio": 98.8516,
+        "momentum": 105.1436
+      },
+      "current": {
+        "ratio": 98.8516,
+        "momentum": 105.1436,
+        "heading_degrees": 75.38,
+        "velocity": 5.5065
+      }
+    }
+  ],
+  "previous_snapshot_id": "2026-W34",
+  "provenance": {
+    "providers": [
+      "alpha_vantage"
+    ],
+    "source_latest_at": "2026-08-25T10:26:07.607909+00:00",
+    "series": {
+      "SPY": {
+        "observations": 1398,
+        "latest_week": "2026-08-21"
+      },
+      "XLB": {
+        "observations": 1398,
+        "latest_week": "2026-08-21"
+      },
+      "XLC": {
+        "observations": 426,
+        "latest_week": "2026-08-21"
+      },
+      "XLE": {
+        "observations": 1398,
+        "latest_week": "2026-08-21"
+      },
+      "XLF": {
+        "observations": 1398,
+        "latest_week": "2026-08-21"
+      },
+      "XLI": {
+        "observations": 1398,
+        "latest_week": "2026-08-21"
+      },
+      "XLK": {
+        "observations": 1398,
+        "latest_week": "2026-08-21"
+      },
+      "XLP": {
+        "observations": 1398,
+        "latest_week": "2026-08-21"
+      },
+      "XLRE": {
+        "observations": 567,
+        "latest_week": "2026-08-21"
+      },
+      "XLU": {
+        "observations": 1398,
+        "latest_week": "2026-08-21"
+      },
+      "XLV": {
+        "observations": 1398,
+        "latest_week": "2026-08-21"
+      },
+      "XLY": {
+        "observations": 1398,
+        "latest_week": "2026-08-21"
+      }
+    }
   }
 }
