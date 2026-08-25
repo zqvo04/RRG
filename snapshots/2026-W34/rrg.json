@@ -2,7 +2,7 @@
   "snapshot_id": "2026-W34",
   "status": "verified",
   "as_of_week": "2026-08-21",
-  "generated_at": "2026-08-25T14:27:19.679085+00:00",
+  "generated_at": "2026-08-25T15:39:04.607506+00:00",
   "universe_id": "us_sector_spdr_v1",
   "benchmark": "SPY",
   "frequency": "weekly",
@@ -1765,7 +1765,7 @@
     "providers": [
       "alpha_vantage"
     ],
-    "source_latest_at": "2026-08-25T14:27:19.630832+00:00",
+    "source_latest_at": "2026-08-25T15:39:04.562158+00:00",
     "series": {
       "SPY": {
         "observations": 1398,
