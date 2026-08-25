@@ -3,9 +3,9 @@ import { demoSnapshot } from "./demo";
 import { RRGChart } from "./RRGChart";
 import type { Quadrant, RotationEvent, SectorState, Snapshot } from "./types";
 
-const labels: Record<Quadrant, string> = { leading: "Leading", weakening: "Weakening", lagging: "Lagging", improving: "Improving" };
-const shortLabels: Record<Quadrant, string> = { leading: "Lead", weakening: "Weak", lagging: "Lag", improving: "Improve" };
 const tailChoices = [4, 8, 12];
+const quadrantLabels: Record<Quadrant, string> = { leading: "상승주도", weakening: "둔화", lagging: "약세", improving: "개선" };
+const filterLabels: Record<Quadrant, string> = { leading: "주도", weakening: "둔화", lagging: "약세", improving: "개선" };
 const sectorLabels: Record<string, string> = {
   XLB: "소재", XLC: "커뮤니케이션", XLY: "경기소비재", XLP: "필수소비재", XLE: "에너지", XLF: "금융",
   XLV: "헬스케어", XLI: "산업재", XLK: "정보기술", XLRE: "부동산", XLU: "유틸리티",
@@ -13,7 +13,7 @@ const sectorLabels: Record<string, string> = {
 const sectorLabel = (ticker: string, fallback = ticker) => sectorLabels[ticker] ?? fallback;
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));
+  return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));
 }
 
 function freshness(snapshot: Snapshot) {
@@ -28,20 +28,20 @@ function eventLabel(event: RotationEvent) {
 }
 
 function eventDetail(event: RotationEvent) {
-  if (event.kind === "quadrant_change") return `${String(event.previous.quadrant)} → ${String(event.current.quadrant)}`;
-  if (event.kind === "boundary_approach") return "다음 사분면을 주시하세요";
+  if (event.kind === "quadrant_change") return `${quadrantLabels[event.previous.quadrant as Quadrant]} → ${quadrantLabels[event.current.quadrant as Quadrant]}`;
+  if (event.kind === "boundary_approach") return "다음 사분면 진입 여부를 확인하세요";
   return "이번 주 이동 폭 상위권";
 }
 
 function direction(heading: number | null) {
-  if (heading === null) return "정체";
-  if (heading >= 337.5 || heading < 22.5) return "강도 개선";
+  if (heading === null) return "방향 관찰";
+  if (heading >= 337.5 || heading < 22.5) return "상대 강도 개선";
   if (heading < 67.5) return "동반 개선";
-  if (heading < 112.5) return "모멘텀 개선";
-  if (heading < 157.5) return "강도 약화";
+  if (heading < 112.5) return "상대 모멘텀 개선";
+  if (heading < 157.5) return "상대 강도 둔화";
   if (heading < 202.5) return "동반 약화";
-  if (heading < 247.5) return "강도 회복";
-  if (heading < 292.5) return "강도 회복";
+  if (heading < 247.5) return "상대 강도 회복";
+  if (heading < 292.5) return "모멘텀 회복";
   return "강세 유지";
 }
 
@@ -53,9 +53,13 @@ function quadrantFor(ratio: number, momentum: number): Quadrant {
 }
 
 function arrowForHeading(heading: number | null) {
-  if (heading === null) return "•";
+  if (heading === null) return "—";
   const arrows = ["→", "↗", "↑", "↖", "←", "↙", "↓", "↘"];
   return arrows[Math.round(heading / 45) % 8];
+}
+
+function SignedDelta({ value }: { value: number }) {
+  return <span className={value >= 0 ? "positive" : "negative"}>{value >= 0 ? "+" : ""}{value.toFixed(2)}</span>;
 }
 
 function SectorDetail({ sector, tail }: { sector: SectorState; tail: number }) {
@@ -67,11 +71,27 @@ function SectorDetail({ sector, tail }: { sector: SectorState; tail: number }) {
   const momentumWindow = sector.momentum - start.momentum;
   const startQuadrant = quadrantFor(start.ratio, start.momentum);
   const distance = Math.hypot(ratioWindow, momentumWindow);
+
   return <section className="detail-card" aria-live="polite">
-    <div className="detail-top"><div><p className="section-kicker">SELECTED SECTOR</p><h2>{sectorLabel(sector.ticker)} <small>{sector.ticker}</small></h2><p>{sector.name}</p></div><span className={`quadrant-badge ${sector.quadrant}`}>{labels[sector.quadrant]}</span></div>
-    <div className="direction-line"><span className="direction-arrow" aria-hidden="true">{arrowForHeading(sector.heading_degrees)}</span><span>{direction(sector.heading_degrees)}</span><span>·</span><span>속도 {sector.velocity?.toFixed(2) ?? "—"}</span></div>
-    <div className="metric-grid"><div><span>RS-RATIO</span><strong>{sector.ratio.toFixed(2)}</strong><small className={ratioChange >= 0 ? "positive" : "negative"}>{ratioChange >= 0 ? "+" : ""}{ratioChange.toFixed(2)} 최근 1주</small></div><div><span>RS-MOMENTUM</span><strong>{sector.momentum.toFixed(2)}</strong><small className={momentumChange >= 0 ? "positive" : "negative"}>{momentumChange >= 0 ? "+" : ""}{momentumChange.toFixed(2)} 최근 1주</small></div></div>
-    <div className="trajectory-summary"><div><span>최근 {tail}주 궤적</span><strong>{labels[startQuadrant]} <b>→</b> {labels[sector.quadrant]}</strong></div><div><span>이동 거리</span><strong>{distance.toFixed(2)}</strong></div><div className="trajectory-deltas"><span>Ratio {ratioWindow >= 0 ? "+" : ""}{ratioWindow.toFixed(2)}</span><span>Momentum {momentumWindow >= 0 ? "+" : ""}{momentumWindow.toFixed(2)}</span></div></div>
+    <div className="panel-label">선택 섹터</div>
+    <div className="detail-top"><div><h2>{sectorLabel(sector.ticker, sector.name)}</h2><p><code>{sector.ticker}</code> · {sector.name}</p></div><span className={`quadrant-badge ${sector.quadrant}`}>{quadrantLabels[sector.quadrant]}</span></div>
+    <div className="direction-line"><span className="direction-arrow" aria-hidden="true">{arrowForHeading(sector.heading_degrees)}</span><strong>{direction(sector.heading_degrees)}</strong><span>속도 {sector.velocity?.toFixed(2) ?? "—"}</span></div>
+    <dl className="metric-grid"><div><dt>RS-RATIO</dt><dd>{sector.ratio.toFixed(2)}</dd><small><SignedDelta value={ratioChange} /> 최근 1주</small></div><div><dt>RS-MOMENTUM</dt><dd>{sector.momentum.toFixed(2)}</dd><small><SignedDelta value={momentumChange} /> 최근 1주</small></div></dl>
+    <div className="trajectory-summary"><div><span>최근 {tail}주</span><strong>{quadrantLabels[startQuadrant]} <b>→</b> {quadrantLabels[sector.quadrant]}</strong></div><div><span>이동 거리</span><strong>{distance.toFixed(2)}</strong></div><div className="trajectory-deltas"><span>Ratio <SignedDelta value={ratioWindow} /></span><span>Momentum <SignedDelta value={momentumWindow} /></span></div></div>
+  </section>;
+}
+
+function SignalDocket({ events, sectors, onPick }: { events: RotationEvent[]; sectors: SectorState[]; onPick: (ticker: string) => void }) {
+  return <section className="signal-docket" aria-labelledby="signal-title">
+    <div className="docket-head"><div><div className="panel-label">주간 관찰</div><h2 id="signal-title">우선 확인</h2></div><span>{events.length}</span></div>
+    {events.length ? <div className="docket-list">{events.map((event) => <button key={event.event_id} className="signal-row" onClick={() => onPick(event.ticker)}><span className={`event-pin ${event.severity}`} aria-hidden="true" /><span className="signal-copy"><strong>{sectorLabel(event.ticker, sectors.find((sector) => sector.ticker === event.ticker)?.name)}</strong><small><code>{event.ticker}</code> · {eventLabel(event)}</small></span><span className="signal-detail">{eventDetail(event)}</span></button>)}</div> : <p className="empty-docket">이번 주에 표시할 별도 이벤트가 없습니다.</p>}
+  </section>;
+}
+
+function SectorNavigator({ sectors, selected, onPick }: { sectors: SectorState[]; selected: string | undefined; onPick: (ticker: string) => void }) {
+  return <section className="sector-navigator" aria-labelledby="navigator-title">
+    <div className="docket-head"><div><div className="panel-label">전체 섹터</div><h2 id="navigator-title">Sector list</h2></div><span>{sectors.length}</span></div>
+    <div className="sector-list">{sectors.map((sector) => <button key={sector.ticker} className={`${sector.ticker === selected ? "active" : ""} ${sector.quadrant}`} aria-pressed={sector.ticker === selected} onClick={() => onPick(sector.ticker)}><span className="sector-dot" /><span className="sector-name"><strong>{sectorLabel(sector.ticker, sector.name)}</strong><small>{sector.ticker}</small></span><span className="sector-state">{filterLabels[sector.quadrant]}</span></button>)}</div>
   </section>;
 }
 
@@ -95,17 +115,21 @@ export default function App() {
   const status = freshness(snapshot);
   const selected = snapshot.sectors.find((sector) => sector.ticker === active) ?? visible[0];
   const signals = (snapshot.events ?? []).slice(0, 3);
+  const selectSector = (ticker: string) => { setFilter("all"); setActive(ticker); };
 
   return <main className="atlas-shell">
-    <header className="app-header"><div className="identity"><span className="brand-mark" aria-hidden="true"><i /></span><div><p>SECTOR RELATIVE STRENGTH</p><h1>RRG Atlas</h1></div></div><div className={`status-block ${status.stale ? "stale" : ""}`}><span className="status-light" /><div><strong>{status.stale ? "Data stale" : "Data verified"}</strong><small>{formatDate(snapshot.as_of_week)} · {status.days}일 전</small></div></div></header>
+    <header className="topbar"><a className="brand" href="./" aria-label="RRG Atlas 처음으로"><span>RRG</span><strong>Sector Monitor</strong></a><div className="top-meta"><span>US SECTORS / SPY</span><span className={`status-dot ${status.stale ? "stale" : ""}`}><i />{status.stale ? "검증 필요" : "검증 완료"}</span></div></header>
+    <section className="page-title"><div><p className="eyebrow">WEEKLY RELATIVE STRENGTH</p><h1>US Sector Rotation</h1><p>SPY 대비 11개 섹터의 상대 강도와 변화를 추적합니다.</p></div><dl className="snapshot-meta"><div><dt>기준일</dt><dd>{formatDate(snapshot.as_of_week)}</dd></div><div><dt>스냅샷</dt><dd>{snapshot.snapshot_id}</dd></div><div><dt>데이터</dt><dd>{snapshot.quality.symbols_received}/{snapshot.quality.symbols_expected} series</dd></div></dl></section>
 
-    <section className="signal-band" aria-labelledby="signals-title"><div className="signal-intro"><p className="section-kicker">THIS WEEK</p><h2 id="signals-title">핵심 신호</h2><span className={snapshot.quality.publishable ? "data-check pass" : "data-check hold"}>{snapshot.quality.publishable ? "검증 통과" : "검증 보류"} · {snapshot.quality.symbols_received}/{snapshot.quality.symbols_expected}</span></div><div className="signal-list">{signals.length ? signals.map((event) => <button key={event.event_id} className="signal-item" onClick={() => { setFilter("all"); setActive(event.ticker); }}><span className={`event-pin ${event.severity}`} aria-hidden="true" /><div><strong>{sectorLabel(event.ticker)}</strong><span>{event.ticker} · {eventLabel(event)}</span></div><small>{eventDetail(event)}</small></button>) : <p className="no-signal">표시할 비교 신호가 없습니다.</p>}</div></section>
-
-    <section className="workspace-grid"><section className="chart-panel" aria-label="RRG sector map"><div className="panel-header"><div><p className="section-kicker">MARKET MAP</p><h2>섹터 회전</h2><span><b>○</b> 시작점 · <b>→</b> 최근 이동 · <b>●</b> 최신 위치 · 최근 {tail}주</span></div><div className="legend" aria-label="사분면 범례"><span className="leading">Leading</span><span className="weakening">Weakening</span><span className="lagging">Lagging</span><span className="improving">Improving</span></div></div><div className="control-stack"><div className="segmented-control" role="group" aria-label="사분면 필터">{(["all", "leading", "weakening", "lagging", "improving"] as const).map((value) => <button key={value} className={filter === value ? "active" : ""} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value === "all" ? "All" : shortLabels[value]}</button>)}</div><div className="segmented-control compact" role="group" aria-label="표시 기간">{tailChoices.map((value) => <button key={value} disabled={value > availableTail} className={tail === value ? "active" : ""} aria-pressed={tail === value} onClick={() => setTail(value)}>{value}W</button>)}</div></div><div className="chart-frame"><RRGChart sectors={visible} active={selected?.ticker ?? null} tail={tail} onPick={setActive} /></div><div className="chart-note"><span>{visible.length}개 섹터 표시</span><span>기준선 100 · SPY 대비</span></div></section>
-
-      <aside className="inspector-panel">{selected && <SectorDetail sector={selected} tail={tail} />}<section className="sector-navigator"><div className="navigator-head"><p className="section-kicker">SECTOR NAVIGATOR</p><span>{snapshot.sectors.length}</span></div><div className="sector-grid">{snapshot.sectors.map((sector) => <button key={sector.ticker} className={`${sector.ticker === selected?.ticker ? "active" : ""} ${sector.quadrant}`} aria-pressed={sector.ticker === selected?.ticker} onClick={() => { setFilter("all"); setActive(sector.ticker); }}><span className="sector-dot" /><strong>{sectorLabel(sector.ticker, sector.name)}</strong><small>{sector.ticker} · {shortLabels[sector.quadrant]}</small></button>)}</div></section></aside>
+    <section className="dashboard-grid">
+      <section className="map-workspace" aria-label="RRG 섹터 지도">
+        <header className="workspace-head"><div><div className="panel-label">RRG MAP</div><h2>섹터 상대 회전</h2><p><b>○</b> 시작 · <b>→</b> 최근 이동 · <b>●</b> 최신 위치</p></div><div className="legend" aria-label="사분면 범례"><span className="leading">주도</span><span className="weakening">둔화</span><span className="lagging">약세</span><span className="improving">개선</span></div></header>
+        <div className="workspace-controls"><div className="filter-control" role="group" aria-label="사분면 필터">{(["all", "leading", "weakening", "lagging", "improving"] as const).map((value) => <button key={value} className={filter === value ? "active" : ""} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value === "all" ? "전체" : filterLabels[value]}</button>)}</div><div className="tail-control" role="group" aria-label="표시 기간">{tailChoices.map((value) => <button key={value} disabled={value > availableTail} className={tail === value ? "active" : ""} aria-pressed={tail === value} onClick={() => setTail(value)}>{value}주</button>)}</div></div>
+        <div className="chart-frame"><RRGChart sectors={visible} active={selected?.ticker ?? null} tail={tail} onPick={setActive} /></div>
+        <footer className="map-footer"><span>{visible.length}개 섹터 표시</span><span>기준선 100 · 주간 조정종가</span></footer>
+      </section>
+      <aside className="analysis-rail">{selected && <SectorDetail sector={selected} tail={tail} />}<SignalDocket events={signals} sectors={snapshot.sectors} onPick={selectSector} /><SectorNavigator sectors={snapshot.sectors} selected={selected?.ticker} onPick={selectSector} /></aside>
     </section>
-
-    <footer className="app-footer"><span>Snapshot {snapshot.snapshot_id}</span><span>Weekly adjusted close · RRG-style proxy</span></footer>
+    <footer className="app-footer"><span>Relative strength proxy · weekly adjusted close</span><span>Data refreshed {status.days}일 전</span></footer>
   </main>;
 }
