@@ -4,8 +4,8 @@ import { RRGChart } from "./RRGChart";
 import type { Quadrant, RotationEvent, SectorState, Snapshot } from "./types";
 
 const labels: Record<Quadrant, string> = { leading: "Leading", weakening: "Weakening", lagging: "Lagging", improving: "Improving" };
+const shortLabels: Record<Quadrant, string> = { leading: "Lead", weakening: "Weak", lagging: "Lag", improving: "Improve" };
 const tailChoices = [4, 8, 12];
-const mark = <span className="atlas-mark" aria-hidden="true" />;
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));
@@ -22,10 +22,10 @@ function eventLabel(event: RotationEvent) {
   return "강한 이동";
 }
 
-function eventCopy(event: RotationEvent) {
+function eventDetail(event: RotationEvent) {
   if (event.kind === "quadrant_change") return `${String(event.previous.quadrant)} → ${String(event.current.quadrant)}`;
-  if (event.kind === "boundary_approach") return "기준선 인접";
-  return "주간 이동 상위권";
+  if (event.kind === "boundary_approach") return "다음 사분면을 주시하세요";
+  return "이번 주 이동 폭 상위권";
 }
 
 function direction(heading: number | null) {
@@ -35,19 +35,19 @@ function direction(heading: number | null) {
   if (heading < 112.5) return "모멘텀 개선";
   if (heading < 157.5) return "강도 약화";
   if (heading < 202.5) return "동반 약화";
-  if (heading < 247.5) return "모멘텀 약화";
+  if (heading < 247.5) return "강도 회복";
   if (heading < 292.5) return "강도 회복";
   return "강세 유지";
 }
 
 function SectorDetail({ sector }: { sector: SectorState }) {
-  const prior = sector.trail.at(-2);
-  const ratioDelta = prior ? sector.ratio - prior.ratio : 0;
-  const momentumDelta = prior ? sector.momentum - prior.momentum : 0;
-  return <section className="sector-detail">
-    <div className="detail-heading"><div><span className="eyebrow">SELECTED</span><h2>{sector.ticker}</h2></div><span className={`quadrant ${sector.quadrant}`}>{labels[sector.quadrant]}</span></div>
-    <p className="sector-name">{sector.name} · {direction(sector.heading_degrees)}</p>
-    <dl><div><dt>Ratio</dt><dd>{sector.ratio.toFixed(2)} <small className={ratioDelta >= 0 ? "up" : "down"}>{ratioDelta >= 0 ? "+" : ""}{ratioDelta.toFixed(2)}</small></dd></div><div><dt>Momentum</dt><dd>{sector.momentum.toFixed(2)} <small className={momentumDelta >= 0 ? "up" : "down"}>{momentumDelta >= 0 ? "+" : ""}{momentumDelta.toFixed(2)}</small></dd></div></dl>
+  const previous = sector.trail.at(-2);
+  const ratioChange = previous ? sector.ratio - previous.ratio : 0;
+  const momentumChange = previous ? sector.momentum - previous.momentum : 0;
+  return <section className="detail-card" aria-live="polite">
+    <div className="detail-top"><div><p className="section-kicker">SELECTED SECTOR</p><h2>{sector.ticker}</h2><p>{sector.name}</p></div><span className={`quadrant-badge ${sector.quadrant}`}>{labels[sector.quadrant]}</span></div>
+    <div className="direction-line"><span className="direction-arrow" aria-hidden="true">↗</span><span>{direction(sector.heading_degrees)}</span><span>·</span><span>속도 {sector.velocity?.toFixed(2) ?? "—"}</span></div>
+    <div className="metric-grid"><div><span>RS-RATIO</span><strong>{sector.ratio.toFixed(2)}</strong><small className={ratioChange >= 0 ? "positive" : "negative"}>{ratioChange >= 0 ? "+" : ""}{ratioChange.toFixed(2)} 주간</small></div><div><span>RS-MOMENTUM</span><strong>{sector.momentum.toFixed(2)}</strong><small className={momentumChange >= 0 ? "positive" : "negative"}>{momentumChange >= 0 ? "+" : ""}{momentumChange.toFixed(2)} 주간</small></div></div>
   </section>;
 }
 
@@ -63,26 +63,25 @@ export default function App() {
   }, []);
 
   const availableTail = useMemo(() => snapshot ? Math.min(snapshot.tail_weeks ?? 12, ...snapshot.sectors.map((sector) => Math.max(0, sector.trail.length - 1))) : 12, [snapshot]);
-  useEffect(() => { if (tail > availableTail) setTail(Math.max(...tailChoices.filter((choice) => choice <= availableTail), 4)); }, [tail, availableTail]);
   const visible = useMemo(() => snapshot?.sectors.filter((sector) => filter === "all" || sector.quadrant === filter) ?? [], [snapshot, filter]);
+  useEffect(() => { if (tail > availableTail) setTail(Math.max(...tailChoices.filter((choice) => choice <= availableTail), 4)); }, [tail, availableTail]);
   useEffect(() => { if ((!active || !visible.some((sector) => sector.ticker === active)) && visible[0]) setActive(visible[0].ticker); }, [visible, active]);
 
-  if (!snapshot) return <main className="empty">{mark}<h1>검증된 스냅샷을 기다리고 있습니다.</h1><p>{error ?? "새 주간 스냅샷이 발행되면 RRG 지도가 열립니다."}</p></main>;
-  const selected = snapshot.sectors.find((sector) => sector.ticker === active) ?? visible[0];
+  if (!snapshot) return <main className="empty-state"><h1>검증된 스냅샷을 기다리고 있습니다.</h1><p>{error ?? "새 주간 스냅샷이 발행되면 RRG 지도가 열립니다."}</p></main>;
   const status = freshness(snapshot);
-  const events = (snapshot.events ?? []).slice(0, 3);
+  const selected = snapshot.sectors.find((sector) => sector.ticker === active) ?? visible[0];
+  const signals = (snapshot.events ?? []).slice(0, 3);
 
-  return <main className="app-shell">
-    <header className="topbar"><div className="brand">{mark}<span>RRG / ATLAS</span></div><div className={`data-status ${status.stale ? "stale" : ""}`}><b>{status.stale ? "STALE" : "VERIFIED"}</b><span>{formatDate(snapshot.as_of_week)} · {status.days}d</span></div></header>
-    <section className="context"><div><p className="eyebrow">US SECTORS · SPY RELATIVE</p><h1>섹터 회전 지도</h1></div><p>점은 현재 위치, 선은 지난 {tail}주 궤적입니다.</p></section>
-    {status.stale && <div className="stale-note">최신 검증 스냅샷이 지연되었습니다. 마지막 정상 데이터는 {formatDate(snapshot.as_of_week)} 기준입니다.</div>}
+  return <main className="atlas-shell">
+    <header className="app-header"><div className="identity"><span className="brand-mark" aria-hidden="true"><i /></span><div><p>SECTOR RELATIVE STRENGTH</p><h1>RRG Atlas</h1></div></div><div className={`status-block ${status.stale ? "stale" : ""}`}><span className="status-light" /><div><strong>{status.stale ? "Data stale" : "Data verified"}</strong><small>{formatDate(snapshot.as_of_week)} · {status.days}일 전</small></div></div></header>
 
-    <section className="workspace">
-      <section className="chart-card"><div className="chart-toolbar"><div className="filters" aria-label="사분면 필터">{(["all", "leading", "weakening", "lagging", "improving"] as const).map((value) => <button key={value} className={filter === value ? "active" : ""} onClick={() => setFilter(value)}>{value === "all" ? "All" : labels[value]}</button>)}</div><div className="tail-control" aria-label="표시 기간"><span>Tail</span>{tailChoices.map((value) => <button key={value} disabled={value > availableTail} className={tail === value ? "active" : ""} onClick={() => setTail(value)}>{value}W</button>)}</div></div><RRGChart sectors={visible} active={selected?.ticker ?? null} tail={tail} onPick={setActive} /><div className="chart-caption"><span>{visible.length} sectors</span><span>Ratio · Momentum 기준선 100</span></div></section>
-      <aside className="side-card"><div className="sector-list"><p className="eyebrow">SECTORS</p>{snapshot.sectors.map((sector) => <button key={sector.ticker} className={sector.ticker === selected?.ticker ? "selected" : ""} onClick={() => { setFilter("all"); setActive(sector.ticker); }}><i className={sector.quadrant} /><strong>{sector.ticker}</strong><span>{labels[sector.quadrant]}</span></button>)}</div>{selected && <SectorDetail sector={selected} />}</aside>
+    <section className="signal-band" aria-labelledby="signals-title"><div className="signal-intro"><p className="section-kicker">THIS WEEK</p><h2 id="signals-title">핵심 신호</h2><span className={snapshot.quality.publishable ? "data-check pass" : "data-check hold"}>{snapshot.quality.publishable ? "검증 통과" : "검증 보류"} · {snapshot.quality.symbols_received}/{snapshot.quality.symbols_expected}</span></div><div className="signal-list">{signals.length ? signals.map((event) => <button key={event.event_id} className="signal-item" onClick={() => { setFilter("all"); setActive(event.ticker); }}><span className={`event-pin ${event.severity}`} aria-hidden="true" /><div><strong>{event.ticker}</strong><span>{eventLabel(event)}</span></div><small>{eventDetail(event)}</small></button>) : <p className="no-signal">표시할 비교 신호가 없습니다.</p>}</div></section>
+
+    <section className="workspace-grid"><section className="chart-panel" aria-label="RRG sector map"><div className="panel-header"><div><p className="section-kicker">MARKET MAP</p><h2>섹터 회전</h2><span>점은 현재 위치, 선은 최근 {tail}주 흐름입니다.</span></div><div className="legend" aria-label="사분면 범례"><span className="leading">Leading</span><span className="weakening">Weakening</span><span className="lagging">Lagging</span><span className="improving">Improving</span></div></div><div className="control-stack"><div className="segmented-control" role="group" aria-label="사분면 필터">{(["all", "leading", "weakening", "lagging", "improving"] as const).map((value) => <button key={value} className={filter === value ? "active" : ""} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value === "all" ? "All" : shortLabels[value]}</button>)}</div><div className="segmented-control compact" role="group" aria-label="표시 기간">{tailChoices.map((value) => <button key={value} disabled={value > availableTail} className={tail === value ? "active" : ""} aria-pressed={tail === value} onClick={() => setTail(value)}>{value}W</button>)}</div></div><div className="chart-frame"><RRGChart sectors={visible} active={selected?.ticker ?? null} tail={tail} onPick={setActive} /></div><div className="chart-note"><span>{visible.length}개 섹터 표시</span><span>기준선 100 · SPY 대비</span></div></section>
+
+      <aside className="inspector-panel">{selected && <SectorDetail sector={selected} />}<section className="sector-navigator"><div className="navigator-head"><p className="section-kicker">SECTOR NAVIGATOR</p><span>{snapshot.sectors.length}</span></div><div className="sector-grid">{snapshot.sectors.map((sector) => <button key={sector.ticker} className={`${sector.ticker === selected?.ticker ? "active" : ""} ${sector.quadrant}`} aria-pressed={sector.ticker === selected?.ticker} onClick={() => { setFilter("all"); setActive(sector.ticker); }}><span className="sector-dot" /><strong>{sector.ticker}</strong><small>{shortLabels[sector.quadrant]}</small></button>)}</div></section></aside>
     </section>
 
-    <section className="signal-strip"><div className="signal-heading"><div><p className="eyebrow">THIS WEEK</p><h2>주요 신호</h2></div><span className={snapshot.quality.publishable ? "quality-pass" : "quality-hold"}>{snapshot.quality.publishable ? "DATA CHECKED" : "DATA HOLD"} · {snapshot.quality.symbols_received}/{snapshot.quality.symbols_expected}</span></div>{events.length ? <div className="signals">{events.map((event) => <button key={event.event_id} onClick={() => { setFilter("all"); setActive(event.ticker); }}><span className={`signal-dot ${event.severity}`} /><strong>{event.ticker}</strong><span>{eventLabel(event)}</span><em>{eventCopy(event)}</em></button>)}</div> : <p className="no-signals">이전 검증 스냅샷과의 비교 신호가 아직 없습니다.</p>}</section>
-    <footer><span>Snapshot {snapshot.snapshot_id}</span><span>RRG-style proxy · weekly adjusted close</span></footer>
+    <footer className="app-footer"><span>Snapshot {snapshot.snapshot_id}</span><span>Weekly adjusted close · RRG-style proxy</span></footer>
   </main>;
 }
