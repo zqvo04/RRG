@@ -3,7 +3,7 @@ import { demoSnapshot } from "./demo";
 import { RRGChart } from "./RRGChart";
 import type { Quadrant, RotationEvent, SectorState, Snapshot } from "./types";
 
-const tailChoices = [4, 8, 12];
+const tailChoices = [4, 8, 12, 16];
 const quadrantLabels: Record<Quadrant, string> = { leading: "상승주도", weakening: "둔화", lagging: "약세", improving: "개선" };
 const filterLabels: Record<Quadrant, string> = { leading: "주도", weakening: "둔화", lagging: "약세", improving: "개선" };
 const sectorLabels: Record<string, string> = {
@@ -115,6 +115,8 @@ export default function App() {
   const status = freshness(snapshot);
   const selected = snapshot.sectors.find((sector) => sector.ticker === active) ?? visible[0];
   const signals = (snapshot.events ?? []).slice(0, 3);
+  const usesSmoothedTrail = tail >= 12;
+  const smoothingLabel = tail >= 16 ? " · 5주 평균 / 2주 압축" : " · 중간 경로 3주 평균";
   const selectSector = (ticker: string) => { setFilter("all"); setActive(ticker); };
 
   return <main className="atlas-shell">
@@ -123,7 +125,7 @@ export default function App() {
 
     <section className="dashboard-grid">
       <section className="map-workspace" aria-label="RRG 섹터 지도">
-        <header className="workspace-head"><div><div className="panel-label">RRG MAP</div><h2>섹터 상대 회전</h2><p><b>○</b> 시작 · <b>→</b> 최근 이동 · <b>●</b> 최신 위치</p></div><div className="legend" aria-label="사분면 범례"><span className="leading">주도</span><span className="weakening">둔화</span><span className="lagging">약세</span><span className="improving">개선</span></div></header>
+        <header className="workspace-head"><div><div className="panel-label">RRG MAP</div><h2>섹터 상대 회전</h2><p><b>○</b> 시작 · <b>→</b> 최근 이동 · <b>●</b> 최신 위치{usesSmoothedTrail && <em>{smoothingLabel}</em>}</p></div><div className="legend" aria-label="사분면 범례"><span className="leading">주도</span><span className="weakening">둔화</span><span className="lagging">약세</span><span className="improving">개선</span></div></header>
         <div className="workspace-controls"><div className="filter-control" role="group" aria-label="사분면 필터">{(["all", "leading", "weakening", "lagging", "improving"] as const).map((value) => <button key={value} className={filter === value ? "active" : ""} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value === "all" ? "전체" : filterLabels[value]}</button>)}</div><div className="tail-control" role="group" aria-label="표시 기간">{tailChoices.map((value) => <button key={value} disabled={value > availableTail} className={tail === value ? "active" : ""} aria-pressed={tail === value} onClick={() => setTail(value)}>{value}주</button>)}</div></div>
         <div className="chart-frame"><RRGChart sectors={visible} active={selected?.ticker ?? null} tail={tail} onPick={setActive} /></div>
         <footer className="map-footer"><span>{visible.length}개 섹터 표시</span><span>기준선 100 · 주간 조정종가</span></footer>
