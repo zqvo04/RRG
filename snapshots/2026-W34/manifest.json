@@ -2,7 +2,7 @@
   "snapshot_id": "2026-W34",
   "as_of_week": "2026-08-21",
   "formula_version": "rrg_proxy_v2",
-  "payload_sha256": "651fc3acabaaafdc4bf55973a56b542fdd59302d6ec45fe88fa7890d40b49ddc",
+  "payload_sha256": "1ac6b8435f2bb888f8531053380459f47f7c675f8a7d41ff3e140cb4ce278dab",
   "quality": {
     "symbols_expected": 12,
     "symbols_received": 12,
