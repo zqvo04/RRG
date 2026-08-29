@@ -25,6 +25,21 @@ def test_current_friday_is_available_after_us_market_close() -> None:
     assert [item.week_end for item in actual] == [date(2026, 8, 14), date(2026, 8, 21)]
 
 
+def test_saturday_korea_time_uses_completed_us_friday() -> None:
+    reference = datetime(2026, 8, 29, 17, 17, tzinfo=ZoneInfo("Asia/Seoul"))
+    assert last_completed_friday(reference) == date(2026, 8, 28)
+
+
+def test_friday_before_regular_close_uses_prior_week() -> None:
+    reference = datetime(2026, 8, 28, 16, 14, tzinfo=NY)
+    assert last_completed_friday(reference) == date(2026, 8, 21)
+
+
+def test_friday_after_regular_close_uses_current_week() -> None:
+    reference = datetime(2026, 8, 28, 16, 15, tzinfo=NY)
+    assert last_completed_friday(reference) == date(2026, 8, 28)
+
+
 def test_thursday_holiday_close_is_labeled_with_its_friday_anchor() -> None:
     reference = datetime(2026, 7, 10, 16, 20, tzinfo=NY)
     normalized = completed_friday_bars([bar("2026-07-09")], reference)
