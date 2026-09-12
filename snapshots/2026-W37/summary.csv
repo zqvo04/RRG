@@ -1,0 +1,12 @@
+ticker,name,quadrant,ratio,momentum,heading_degrees,velocity
+XLB,Materials,lagging,97.1434,98.972,210.25,1.8579
+XLC,Communication Services,improving,99.673,102.1065,351.86,1.3313
+XLY,Consumer Discretionary,lagging,96.2462,98.7531,106.58,1.0774
+XLP,Consumer Staples,lagging,97.3903,99.6182,260.65,1.3554
+XLE,Energy,leading,106.4299,103.0855,285.0,5.5688
+XLF,Financials,weakening,100.3802,99.3068,236.2,1.3917
+XLV,Health Care,lagging,99.5285,98.6573,229.29,4.2847
+XLI,Industrials,lagging,95.685,96.1249,252.53,0.5834
+XLK,Information Technology,weakening,101.8108,99.7674,25.97,0.7616
+XLRE,Real Estate,lagging,96.6176,99.2571,286.84,0.5448
+XLU,Utilities,improving,95.4194,100.6573,267.87,2.1824
