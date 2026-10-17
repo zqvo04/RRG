@@ -1,8 +1,8 @@
 {
-  "snapshot_id": "2026-W41",
+  "snapshot_id": "2026-W42",
   "status": "verified",
-  "as_of_week": "2026-10-09",
-  "generated_at": "2026-10-10T15:26:24.537179+00:00",
+  "as_of_week": "2026-10-16",
+  "generated_at": "2026-10-17T13:01:50.471003+00:00",
   "universe_id": "us_sector_spdr_v1",
   "benchmark": "SPY",
   "frequency": "weekly",
@@ -16,17 +16,12 @@
     {
       "ticker": "XLB",
       "name": "Materials",
-      "ratio": 95.5286,
-      "momentum": 98.3376,
-      "quadrant": "lagging",
-      "heading_degrees": 72.92,
-      "velocity": 2.4268,
+      "ratio": 100.3285,
+      "momentum": 104.4733,
+      "quadrant": "leading",
+      "heading_degrees": 51.96,
+      "velocity": 7.7901,
       "trail": [
-        {
-          "week": "2026-04-10",
-          "ratio": 103.0563,
-          "momentum": 101.1457
-        },
         {
           "week": "2026-04-17",
           "ratio": 98.6702,
@@ -39,7 +34,7 @@
         },
         {
           "week": "2026-05-01",
-          "ratio": 96.9703,
+          "ratio": 96.9704,
           "momentum": 93.138
         },
         {
@@ -54,7 +49,7 @@
         },
         {
           "week": "2026-05-22",
-          "ratio": 94.2207,
+          "ratio": 94.2208,
           "momentum": 95.6837
         },
         {
@@ -156,23 +151,23 @@
           "week": "2026-10-09",
           "ratio": 95.5286,
           "momentum": 98.3376
+        },
+        {
+          "week": "2026-10-16",
+          "ratio": 100.3285,
+          "momentum": 104.4733
         }
       ]
     },
     {
       "ticker": "XLC",
       "name": "Communication Services",
-      "ratio": 97.1376,
-      "momentum": 97.4563,
-      "quadrant": "lagging",
-      "heading_degrees": 252.48,
-      "velocity": 2.0169,
+      "ratio": 99.1704,
+      "momentum": 100.7463,
+      "quadrant": "improving",
+      "heading_degrees": 58.29,
+      "velocity": 3.8673,
       "trail": [
-        {
-          "week": "2026-04-10",
-          "ratio": 98.4589,
-          "momentum": 97.4465
-        },
         {
           "week": "2026-04-17",
           "ratio": 98.6795,
@@ -215,7 +210,7 @@
         },
         {
           "week": "2026-06-12",
-          "ratio": 94.57,
+          "ratio": 94.5699,
           "momentum": 99.4497
         },
         {
@@ -302,23 +297,23 @@
           "week": "2026-10-09",
           "ratio": 97.1376,
           "momentum": 97.4563
+        },
+        {
+          "week": "2026-10-16",
+          "ratio": 99.1704,
+          "momentum": 100.7463
         }
       ]
     },
     {
       "ticker": "XLY",
       "name": "Consumer Discretionary",
-      "ratio": 97.1114,
-      "momentum": 100.8989,
+      "ratio": 98.8994,
+      "momentum": 103.6533,
       "quadrant": "improving",
-      "heading_degrees": 50.57,
-      "velocity": 2.8002,
+      "heading_degrees": 57.01,
+      "velocity": 3.2838,
       "trail": [
-        {
-          "week": "2026-04-10",
-          "ratio": 98.0466,
-          "momentum": 100.9694
-        },
         {
           "week": "2026-04-17",
           "ratio": 100.0513,
@@ -448,23 +443,23 @@
           "week": "2026-10-09",
           "ratio": 97.1114,
           "momentum": 100.8989
+        },
+        {
+          "week": "2026-10-16",
+          "ratio": 98.8994,
+          "momentum": 103.6533
         }
       ]
     },
     {
       "ticker": "XLP",
       "name": "Consumer Staples",
-      "ratio": 98.1132,
-      "momentum": 100.7422,
-      "quadrant": "improving",
-      "heading_degrees": 48.02,
-      "velocity": 3.9051,
+      "ratio": 104.3473,
+      "momentum": 107.3012,
+      "quadrant": "leading",
+      "heading_degrees": 46.45,
+      "velocity": 9.049,
       "trail": [
-        {
-          "week": "2026-04-10",
-          "ratio": 97.6027,
-          "momentum": 94.739
-        },
         {
           "week": "2026-04-17",
           "ratio": 94.3659,
@@ -594,23 +589,23 @@
           "week": "2026-10-09",
           "ratio": 98.1132,
           "momentum": 100.7422
+        },
+        {
+          "week": "2026-10-16",
+          "ratio": 104.3473,
+          "momentum": 107.3012
         }
       ]
     },
     {
       "ticker": "XLE",
       "name": "Energy",
-      "ratio": 103.1996,
-      "momentum": 96.9648,
-      "quadrant": "weakening",
-      "heading_degrees": 13.89,
-      "velocity": 1.9446,
+      "ratio": 108.7693,
+      "momentum": 104.1848,
+      "quadrant": "leading",
+      "heading_degrees": 52.35,
+      "velocity": 9.1187,
       "trail": [
-        {
-          "week": "2026-04-10",
-          "ratio": 101.1571,
-          "momentum": 89.1229
-        },
         {
           "week": "2026-04-17",
           "ratio": 94.3968,
@@ -629,7 +624,7 @@
         {
           "week": "2026-05-08",
           "ratio": 93.4173,
-          "momentum": 92.3486
+          "momentum": 92.3487
         },
         {
           "week": "2026-05-15",
@@ -740,23 +735,23 @@
           "week": "2026-10-09",
           "ratio": 103.1996,
           "momentum": 96.9648
+        },
+        {
+          "week": "2026-10-16",
+          "ratio": 108.7693,
+          "momentum": 104.1848
         }
       ]
     },
     {
       "ticker": "XLF",
       "name": "Financials",
-      "ratio": 96.5246,
-      "momentum": 96.159,
-      "quadrant": "lagging",
-      "heading_degrees": 55.16,
-      "velocity": 2.8743,
+      "ratio": 99.8999,
+      "momentum": 101.6169,
+      "quadrant": "improving",
+      "heading_degrees": 58.27,
+      "velocity": 6.4173,
       "trail": [
-        {
-          "week": "2026-04-10",
-          "ratio": 98.3284,
-          "momentum": 102.3575
-        },
         {
           "week": "2026-04-17",
           "ratio": 97.5526,
@@ -886,23 +881,23 @@
           "week": "2026-10-09",
           "ratio": 96.5246,
           "momentum": 96.159
+        },
+        {
+          "week": "2026-10-16",
+          "ratio": 99.8999,
+          "momentum": 101.6169
         }
       ]
     },
     {
       "ticker": "XLV",
       "name": "Health Care",
-      "ratio": 100.6356,
-      "momentum": 101.1124,
+      "ratio": 105.2688,
+      "momentum": 103.9821,
       "quadrant": "leading",
-      "heading_degrees": 70.57,
-      "velocity": 4.4692,
+      "heading_degrees": 31.77,
+      "velocity": 5.4499,
       "trail": [
-        {
-          "week": "2026-04-10",
-          "ratio": 96.5438,
-          "momentum": 96.9208
-        },
         {
           "week": "2026-04-17",
           "ratio": 94.2079,
@@ -911,7 +906,7 @@
         {
           "week": "2026-04-24",
           "ratio": 92.0067,
-          "momentum": 92.1141
+          "momentum": 92.114
         },
         {
           "week": "2026-05-01",
@@ -935,7 +930,7 @@
         },
         {
           "week": "2026-05-29",
-          "ratio": 94.9797,
+          "ratio": 94.9798,
           "momentum": 102.2812
         },
         {
@@ -1032,26 +1027,26 @@
           "week": "2026-10-09",
           "ratio": 100.6356,
           "momentum": 101.1124
+        },
+        {
+          "week": "2026-10-16",
+          "ratio": 105.2688,
+          "momentum": 103.9821
         }
       ]
     },
     {
       "ticker": "XLI",
       "name": "Industrials",
-      "ratio": 95.1445,
-      "momentum": 99.4351,
-      "quadrant": "lagging",
-      "heading_degrees": 218.42,
-      "velocity": 0.9268,
+      "ratio": 96.7249,
+      "momentum": 101.7191,
+      "quadrant": "improving",
+      "heading_degrees": 55.32,
+      "velocity": 2.7775,
       "trail": [
         {
-          "week": "2026-04-10",
-          "ratio": 101.8555,
-          "momentum": 100.5596
-        },
-        {
           "week": "2026-04-17",
-          "ratio": 98.7853,
+          "ratio": 98.7854,
           "momentum": 97.7162
         },
         {
@@ -1178,23 +1173,23 @@
           "week": "2026-10-09",
           "ratio": 95.1445,
           "momentum": 99.4351
+        },
+        {
+          "week": "2026-10-16",
+          "ratio": 96.7249,
+          "momentum": 101.7191
         }
       ]
     },
     {
       "ticker": "XLK",
       "name": "Information Technology",
-      "ratio": 103.0757,
-      "momentum": 101.2424,
-      "quadrant": "leading",
-      "heading_degrees": 232.22,
-      "velocity": 3.7154,
+      "ratio": 97.4576,
+      "momentum": 95.0611,
+      "quadrant": "lagging",
+      "heading_degrees": 227.73,
+      "velocity": 8.3529,
       "trail": [
-        {
-          "week": "2026-04-10",
-          "ratio": 101.1367,
-          "momentum": 101.3654
-        },
         {
           "week": "2026-04-17",
           "ratio": 104.0238,
@@ -1324,23 +1319,23 @@
           "week": "2026-10-09",
           "ratio": 103.0757,
           "momentum": 101.2424
+        },
+        {
+          "week": "2026-10-16",
+          "ratio": 97.4576,
+          "momentum": 95.0611
         }
       ]
     },
     {
       "ticker": "XLRE",
       "name": "Real Estate",
-      "ratio": 94.8955,
-      "momentum": 98.2177,
-      "quadrant": "lagging",
-      "heading_degrees": 42.99,
-      "velocity": 2.1038,
+      "ratio": 98.3496,
+      "momentum": 103.0437,
+      "quadrant": "improving",
+      "heading_degrees": 54.41,
+      "velocity": 5.9347,
       "trail": [
-        {
-          "week": "2026-04-10",
-          "ratio": 101.0278,
-          "momentum": 98.3518
-        },
         {
           "week": "2026-04-17",
           "ratio": 100.3515,
@@ -1470,23 +1465,23 @@
           "week": "2026-10-09",
           "ratio": 94.8955,
           "momentum": 98.2177
+        },
+        {
+          "week": "2026-10-16",
+          "ratio": 98.3496,
+          "momentum": 103.0437
         }
       ]
     },
     {
       "ticker": "XLU",
       "name": "Utilities",
-      "ratio": 96.0894,
-      "momentum": 100.7023,
+      "ratio": 99.9244,
+      "momentum": 106.7671,
       "quadrant": "improving",
-      "heading_degrees": 47.04,
-      "velocity": 4.6948,
+      "heading_degrees": 57.69,
+      "velocity": 7.1756,
       "trail": [
-        {
-          "week": "2026-04-10",
-          "ratio": 101.6903,
-          "momentum": 95.3598
-        },
         {
           "week": "2026-04-17",
           "ratio": 96.239,
@@ -1616,6 +1611,11 @@
           "week": "2026-10-09",
           "ratio": 96.0894,
           "momentum": 100.7023
+        },
+        {
+          "week": "2026-10-16",
+          "ratio": 99.9244,
+          "momentum": 106.7671
         }
       ]
     }
@@ -1634,7 +1634,7 @@
       },
       "history_length": {
         "passed": true,
-        "observed": 433,
+        "observed": 434,
         "expected": 52,
         "message": "Every series has the minimum completed-week history."
       },
@@ -1653,10 +1653,10 @@
       "date_alignment": {
         "passed": true,
         "observed": [
-          "2026-10-09"
+          "2026-10-16"
         ],
         "expected": [
-          "2026-10-09"
+          "2026-10-16"
         ],
         "message": "All sectors align to the expected completed Friday."
       }
@@ -1664,304 +1664,339 @@
   },
   "events": [
     {
-      "event_id": "quadrant-change:XLI:2026-10-09",
+      "event_id": "quadrant-change:XLB:2026-10-16",
       "kind": "quadrant_change",
       "severity": "high",
-      "ticker": "XLI",
-      "message": "XLI moved from improving to lagging.",
+      "ticker": "XLB",
+      "message": "XLB moved from lagging to leading.",
       "previous": {
-        "snapshot_id": "2026-W40",
-        "quadrant": "improving",
-        "ratio": 95.8707,
-        "momentum": 100.011
-      },
-      "current": {
+        "snapshot_id": "2026-W41",
         "quadrant": "lagging",
-        "ratio": 95.1445,
-        "momentum": 99.4351
-      }
-    },
-    {
-      "event_id": "quadrant-change:XLP:2026-10-09",
-      "kind": "quadrant_change",
-      "severity": "high",
-      "ticker": "XLP",
-      "message": "XLP moved from lagging to improving.",
-      "previous": {
-        "snapshot_id": "2026-W40",
-        "quadrant": "lagging",
-        "ratio": 95.5013,
-        "momentum": 97.8391
-      },
-      "current": {
-        "quadrant": "improving",
-        "ratio": 98.1132,
-        "momentum": 100.7422
-      }
-    },
-    {
-      "event_id": "quadrant-change:XLU:2026-10-09",
-      "kind": "quadrant_change",
-      "severity": "high",
-      "ticker": "XLU",
-      "message": "XLU moved from lagging to improving.",
-      "previous": {
-        "snapshot_id": "2026-W40",
-        "quadrant": "lagging",
-        "ratio": 92.8901,
-        "momentum": 97.2664
-      },
-      "current": {
-        "quadrant": "improving",
-        "ratio": 96.0894,
-        "momentum": 100.7023
-      }
-    },
-    {
-      "event_id": "quadrant-change:XLV:2026-10-09",
-      "kind": "quadrant_change",
-      "severity": "high",
-      "ticker": "XLV",
-      "message": "XLV moved from lagging to leading.",
-      "previous": {
-        "snapshot_id": "2026-W40",
-        "quadrant": "lagging",
-        "ratio": 99.1488,
-        "momentum": 96.8978
+        "ratio": 95.5286,
+        "momentum": 98.3376
       },
       "current": {
         "quadrant": "leading",
-        "ratio": 100.6356,
-        "momentum": 101.1124
+        "ratio": 100.3285,
+        "momentum": 104.4733
       }
     },
     {
-      "event_id": "quadrant-change:XLY:2026-10-09",
+      "event_id": "quadrant-change:XLC:2026-10-16",
       "kind": "quadrant_change",
       "severity": "high",
-      "ticker": "XLY",
-      "message": "XLY moved from lagging to improving.",
+      "ticker": "XLC",
+      "message": "XLC moved from lagging to improving.",
       "previous": {
-        "snapshot_id": "2026-W40",
+        "snapshot_id": "2026-W41",
         "quadrant": "lagging",
-        "ratio": 95.3331,
-        "momentum": 98.7359
+        "ratio": 97.1376,
+        "momentum": 97.4563
       },
       "current": {
         "quadrant": "improving",
-        "ratio": 97.1114,
-        "momentum": 100.8989
+        "ratio": 99.1704,
+        "momentum": 100.7463
       }
     },
     {
-      "event_id": "boundary-approach:XLI:2026-10-09",
-      "kind": "boundary_approach",
-      "severity": "medium",
+      "event_id": "quadrant-change:XLE:2026-10-16",
+      "kind": "quadrant_change",
+      "severity": "high",
+      "ticker": "XLE",
+      "message": "XLE moved from weakening to leading.",
+      "previous": {
+        "snapshot_id": "2026-W41",
+        "quadrant": "weakening",
+        "ratio": 103.1996,
+        "momentum": 96.9648
+      },
+      "current": {
+        "quadrant": "leading",
+        "ratio": 108.7693,
+        "momentum": 104.1848
+      }
+    },
+    {
+      "event_id": "quadrant-change:XLF:2026-10-16",
+      "kind": "quadrant_change",
+      "severity": "high",
+      "ticker": "XLF",
+      "message": "XLF moved from lagging to improving.",
+      "previous": {
+        "snapshot_id": "2026-W41",
+        "quadrant": "lagging",
+        "ratio": 96.5246,
+        "momentum": 96.159
+      },
+      "current": {
+        "quadrant": "improving",
+        "ratio": 99.8999,
+        "momentum": 101.6169
+      }
+    },
+    {
+      "event_id": "quadrant-change:XLI:2026-10-16",
+      "kind": "quadrant_change",
+      "severity": "high",
       "ticker": "XLI",
-      "message": "XLI is within 1.0 points of the 100 baseline on momentum.",
+      "message": "XLI moved from lagging to improving.",
       "previous": {
-        "snapshot_id": "2026-W40",
-        "ratio": 95.8707,
-        "momentum": 100.011
+        "snapshot_id": "2026-W41",
+        "quadrant": "lagging",
+        "ratio": 95.1445,
+        "momentum": 99.4351
       },
       "current": {
-        "ratio": 95.1445,
-        "momentum": 99.4351,
-        "axes": [
-          "momentum"
-        ],
-        "distance": 0.5648999999999944
+        "quadrant": "improving",
+        "ratio": 96.7249,
+        "momentum": 101.7191
       }
     },
     {
-      "event_id": "boundary-approach:XLP:2026-10-09",
+      "event_id": "quadrant-change:XLK:2026-10-16",
+      "kind": "quadrant_change",
+      "severity": "high",
+      "ticker": "XLK",
+      "message": "XLK moved from leading to lagging.",
+      "previous": {
+        "snapshot_id": "2026-W41",
+        "quadrant": "leading",
+        "ratio": 103.0757,
+        "momentum": 101.2424
+      },
+      "current": {
+        "quadrant": "lagging",
+        "ratio": 97.4576,
+        "momentum": 95.0611
+      }
+    },
+    {
+      "event_id": "quadrant-change:XLP:2026-10-16",
+      "kind": "quadrant_change",
+      "severity": "high",
+      "ticker": "XLP",
+      "message": "XLP moved from improving to leading.",
+      "previous": {
+        "snapshot_id": "2026-W41",
+        "quadrant": "improving",
+        "ratio": 98.1132,
+        "momentum": 100.7422
+      },
+      "current": {
+        "quadrant": "leading",
+        "ratio": 104.3473,
+        "momentum": 107.3012
+      }
+    },
+    {
+      "event_id": "quadrant-change:XLRE:2026-10-16",
+      "kind": "quadrant_change",
+      "severity": "high",
+      "ticker": "XLRE",
+      "message": "XLRE moved from lagging to improving.",
+      "previous": {
+        "snapshot_id": "2026-W41",
+        "quadrant": "lagging",
+        "ratio": 94.8955,
+        "momentum": 98.2177
+      },
+      "current": {
+        "quadrant": "improving",
+        "ratio": 98.3496,
+        "momentum": 103.0437
+      }
+    },
+    {
+      "event_id": "boundary-approach:XLB:2026-10-16",
       "kind": "boundary_approach",
       "severity": "medium",
-      "ticker": "XLP",
-      "message": "XLP is within 1.0 points of the 100 baseline on momentum.",
+      "ticker": "XLB",
+      "message": "XLB is within 1.0 points of the 100 baseline on ratio.",
       "previous": {
-        "snapshot_id": "2026-W40",
-        "ratio": 95.5013,
-        "momentum": 97.8391
+        "snapshot_id": "2026-W41",
+        "ratio": 95.5286,
+        "momentum": 98.3376
       },
       "current": {
-        "ratio": 98.1132,
-        "momentum": 100.7422,
+        "ratio": 100.3285,
+        "momentum": 104.4733,
         "axes": [
-          "momentum"
+          "ratio"
         ],
-        "distance": 0.7421999999999969
+        "distance": 0.32850000000000534
       }
     },
     {
-      "event_id": "strong-move:XLP:2026-10-09",
+      "event_id": "boundary-approach:XLC:2026-10-16",
+      "kind": "boundary_approach",
+      "severity": "medium",
+      "ticker": "XLC",
+      "message": "XLC is within 1.0 points of the 100 baseline on ratio, momentum.",
+      "previous": {
+        "snapshot_id": "2026-W41",
+        "ratio": 97.1376,
+        "momentum": 97.4563
+      },
+      "current": {
+        "ratio": 99.1704,
+        "momentum": 100.7463,
+        "axes": [
+          "ratio",
+          "momentum"
+        ],
+        "distance": 0.7463000000000051
+      }
+    },
+    {
+      "event_id": "strong-move:XLE:2026-10-16",
+      "kind": "strong_move",
+      "severity": "medium",
+      "ticker": "XLE",
+      "message": "XLE is one of this week's strongest RRG movers.",
+      "previous": {
+        "snapshot_id": "2026-W41",
+        "ratio": 103.1996,
+        "momentum": 96.9648
+      },
+      "current": {
+        "ratio": 108.7693,
+        "momentum": 104.1848,
+        "heading_degrees": 52.35,
+        "velocity": 9.1187
+      }
+    },
+    {
+      "event_id": "boundary-approach:XLF:2026-10-16",
+      "kind": "boundary_approach",
+      "severity": "medium",
+      "ticker": "XLF",
+      "message": "XLF is within 1.0 points of the 100 baseline on ratio.",
+      "previous": {
+        "snapshot_id": "2026-W41",
+        "ratio": 96.5246,
+        "momentum": 96.159
+      },
+      "current": {
+        "ratio": 99.8999,
+        "momentum": 101.6169,
+        "axes": [
+          "ratio"
+        ],
+        "distance": 0.10009999999999764
+      }
+    },
+    {
+      "event_id": "strong-move:XLK:2026-10-16",
+      "kind": "strong_move",
+      "severity": "medium",
+      "ticker": "XLK",
+      "message": "XLK is one of this week's strongest RRG movers.",
+      "previous": {
+        "snapshot_id": "2026-W41",
+        "ratio": 103.0757,
+        "momentum": 101.2424
+      },
+      "current": {
+        "ratio": 97.4576,
+        "momentum": 95.0611,
+        "heading_degrees": 227.73,
+        "velocity": 8.3529
+      }
+    },
+    {
+      "event_id": "strong-move:XLP:2026-10-16",
       "kind": "strong_move",
       "severity": "medium",
       "ticker": "XLP",
       "message": "XLP is one of this week's strongest RRG movers.",
       "previous": {
-        "snapshot_id": "2026-W40",
-        "ratio": 95.5013,
-        "momentum": 97.8391
-      },
-      "current": {
+        "snapshot_id": "2026-W41",
         "ratio": 98.1132,
-        "momentum": 100.7422,
-        "heading_degrees": 48.02,
-        "velocity": 3.9051
+        "momentum": 100.7422
+      },
+      "current": {
+        "ratio": 104.3473,
+        "momentum": 107.3012,
+        "heading_degrees": 46.45,
+        "velocity": 9.049
       }
     },
     {
-      "event_id": "boundary-approach:XLU:2026-10-09",
+      "event_id": "boundary-approach:XLU:2026-10-16",
       "kind": "boundary_approach",
       "severity": "medium",
       "ticker": "XLU",
-      "message": "XLU is within 1.0 points of the 100 baseline on momentum.",
+      "message": "XLU is within 1.0 points of the 100 baseline on ratio.",
       "previous": {
-        "snapshot_id": "2026-W40",
-        "ratio": 92.8901,
-        "momentum": 97.2664
-      },
-      "current": {
+        "snapshot_id": "2026-W41",
         "ratio": 96.0894,
-        "momentum": 100.7023,
-        "axes": [
-          "momentum"
-        ],
-        "distance": 0.7022999999999939
-      }
-    },
-    {
-      "event_id": "strong-move:XLU:2026-10-09",
-      "kind": "strong_move",
-      "severity": "medium",
-      "ticker": "XLU",
-      "message": "XLU is one of this week's strongest RRG movers.",
-      "previous": {
-        "snapshot_id": "2026-W40",
-        "ratio": 92.8901,
-        "momentum": 97.2664
+        "momentum": 100.7023
       },
       "current": {
-        "ratio": 96.0894,
-        "momentum": 100.7023,
-        "heading_degrees": 47.04,
-        "velocity": 4.6948
-      }
-    },
-    {
-      "event_id": "boundary-approach:XLV:2026-10-09",
-      "kind": "boundary_approach",
-      "severity": "medium",
-      "ticker": "XLV",
-      "message": "XLV is within 1.0 points of the 100 baseline on ratio.",
-      "previous": {
-        "snapshot_id": "2026-W40",
-        "ratio": 99.1488,
-        "momentum": 96.8978
-      },
-      "current": {
-        "ratio": 100.6356,
-        "momentum": 101.1124,
+        "ratio": 99.9244,
+        "momentum": 106.7671,
         "axes": [
           "ratio"
         ],
-        "distance": 0.6355999999999966
-      }
-    },
-    {
-      "event_id": "strong-move:XLV:2026-10-09",
-      "kind": "strong_move",
-      "severity": "medium",
-      "ticker": "XLV",
-      "message": "XLV is one of this week's strongest RRG movers.",
-      "previous": {
-        "snapshot_id": "2026-W40",
-        "ratio": 99.1488,
-        "momentum": 96.8978
-      },
-      "current": {
-        "ratio": 100.6356,
-        "momentum": 101.1124,
-        "heading_degrees": 70.57,
-        "velocity": 4.4692
-      }
-    },
-    {
-      "event_id": "boundary-approach:XLY:2026-10-09",
-      "kind": "boundary_approach",
-      "severity": "medium",
-      "ticker": "XLY",
-      "message": "XLY is within 1.0 points of the 100 baseline on momentum.",
-      "previous": {
-        "snapshot_id": "2026-W40",
-        "ratio": 95.3331,
-        "momentum": 98.7359
-      },
-      "current": {
-        "ratio": 97.1114,
-        "momentum": 100.8989,
-        "axes": [
-          "momentum"
-        ],
-        "distance": 0.8988999999999976
+        "distance": 0.07559999999999434
       }
     }
   ],
-  "previous_snapshot_id": "2026-W40",
+  "previous_snapshot_id": "2026-W41",
   "provenance": {
     "providers": [
       "alpha_vantage"
     ],
-    "source_latest_at": "2026-10-10T15:26:24.502567+00:00",
+    "source_latest_at": "2026-10-17T13:01:50.422419+00:00",
     "series": {
       "SPY": {
-        "observations": 1405,
-        "latest_week": "2026-10-09"
+        "observations": 1406,
+        "latest_week": "2026-10-16"
       },
       "XLB": {
-        "observations": 1405,
-        "latest_week": "2026-10-09"
+        "observations": 1406,
+        "latest_week": "2026-10-16"
       },
       "XLC": {
-        "observations": 433,
-        "latest_week": "2026-10-09"
+        "observations": 434,
+        "latest_week": "2026-10-16"
       },
       "XLE": {
-        "observations": 1405,
-        "latest_week": "2026-10-09"
+        "observations": 1406,
+        "latest_week": "2026-10-16"
       },
       "XLF": {
-        "observations": 1405,
-        "latest_week": "2026-10-09"
+        "observations": 1406,
+        "latest_week": "2026-10-16"
       },
       "XLI": {
-        "observations": 1405,
-        "latest_week": "2026-10-09"
+        "observations": 1406,
+        "latest_week": "2026-10-16"
       },
       "XLK": {
-        "observations": 1405,
-        "latest_week": "2026-10-09"
+        "observations": 1406,
+        "latest_week": "2026-10-16"
       },
       "XLP": {
-        "observations": 1405,
-        "latest_week": "2026-10-09"
+        "observations": 1406,
+        "latest_week": "2026-10-16"
       },
       "XLRE": {
-        "observations": 574,
-        "latest_week": "2026-10-09"
+        "observations": 575,
+        "latest_week": "2026-10-16"
       },
       "XLU": {
-        "observations": 1405,
-        "latest_week": "2026-10-09"
+        "observations": 1406,
+        "latest_week": "2026-10-16"
       },
       "XLV": {
-        "observations": 1405,
-        "latest_week": "2026-10-09"
+        "observations": 1406,
+        "latest_week": "2026-10-16"
       },
       "XLY": {
-        "observations": 1405,
-        "latest_week": "2026-10-09"
+        "observations": 1406,
+        "latest_week": "2026-10-16"
       }
     }
   }
