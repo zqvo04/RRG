@@ -1,0 +1,49 @@
+{
+  "snapshot_id": "2026-W44",
+  "as_of_week": "2026-10-30",
+  "formula_version": "rrg_proxy_v2",
+  "payload_sha256": "a3c1230fee241b160f10521c7a3cc20dee991eaa04ca71c6178f1e66cf56315d",
+  "quality": {
+    "symbols_expected": 12,
+    "symbols_received": 12,
+    "dates_aligned": true,
+    "publishable": true,
+    "checks": {
+      "symbol_set": {
+        "passed": true,
+        "observed": 12,
+        "expected": 12,
+        "message": "All benchmark and sector series were received."
+      },
+      "history_length": {
+        "passed": true,
+        "observed": 436,
+        "expected": 52,
+        "message": "Every series has the minimum completed-week history."
+      },
+      "duplicate_weeks": {
+        "passed": true,
+        "observed": [],
+        "expected": [],
+        "message": "No completed-week duplicates are present."
+      },
+      "positive_prices": {
+        "passed": true,
+        "observed": [],
+        "expected": [],
+        "message": "All adjusted close values are positive."
+      },
+      "date_alignment": {
+        "passed": true,
+        "observed": [
+          "2026-10-30"
+        ],
+        "expected": [
+          "2026-10-30"
+        ],
+        "message": "All sectors align to the expected completed Friday."
+      }
+    }
+  },
+  "event_count": 5
+}
